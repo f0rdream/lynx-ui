@@ -11,7 +11,7 @@ import {
   RadioGroupRoot,
   RadioIndicator,
 } from '@lynx-js/lynx-ui-radio-group'
-import { clsx } from 'clsx'
+import clsx from 'clsx'
 
 const HitSlop = {
   'hit-slop': {

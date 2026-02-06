@@ -231,6 +231,8 @@ tools/typedoc/*.js
 
 **/example-metadata.json
 
+.claude/settings.local.json
+
 output/*
 lynx-examples
 

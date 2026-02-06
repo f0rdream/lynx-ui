@@ -15,7 +15,7 @@ import type { ReactNode } from '@lynx-js/react'
 
 import { Button, ButtonContext } from '@lynx-js/lynx-ui-button'
 import { noop, useMemoizedFn } from '@lynx-js/lynx-ui-common'
-import { clsx } from 'clsx'
+import clsx from 'clsx'
 
 import type {
   RadioGroupRenderProps,

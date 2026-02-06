@@ -23,7 +23,7 @@ import {
   useVisibilityFromPresence,
 } from '@lynx-js/lynx-ui-presence'
 import type { CSSProperties, LayoutChangeEvent } from '@lynx-js/types'
-import { clsx } from 'clsx'
+import clsx from 'clsx'
 
 import {
   arrow,

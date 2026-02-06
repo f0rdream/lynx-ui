@@ -7,7 +7,7 @@ import { useContext } from '@lynx-js/react'
 import { Button } from '@lynx-js/lynx-ui-button'
 import { renderContentWithExtraProps } from '@lynx-js/lynx-ui-common'
 import { PresenceState } from '@lynx-js/lynx-ui-presence'
-import { clsx } from 'clsx'
+import clsx from 'clsx'
 
 import { DialogContext } from './DialogContext'
 import type { DialogTriggerProps } from './types'

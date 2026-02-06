@@ -5,7 +5,7 @@
 import { root, useMemo, useState } from '@lynx-js/react'
 
 import { Button } from '@lynx-js/lynx-ui-button'
-import { clsx } from 'clsx'
+import clsx from 'clsx'
 
 import { LogPanel } from './LogPanel'
 import { createLogger } from './utils/log'

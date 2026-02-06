@@ -6,7 +6,7 @@ import { useContext } from '@lynx-js/react'
 import type { ReactNode } from '@lynx-js/react'
 
 import { ButtonContext } from '@lynx-js/lynx-ui-button'
-import { clsx } from 'clsx'
+import clsx from 'clsx'
 
 import { CheckboxContext } from './CheckboxContext'
 import type { CheckboxIndicatorProps } from './types'

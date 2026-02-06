@@ -14,7 +14,7 @@ import {
   DialogView,
 } from '@lynx-js/lynx-ui-dialog'
 import type { PresenceAnimationStatus } from '@lynx-js/lynx-ui-dialog'
-import { clsx } from 'clsx'
+import clsx from 'clsx'
 
 // This demo is shown how to use different animation in entering and leaving.
 // In this demo, we use shorter fade in animation when dialog is shown, and longer fade out animation when dialog is dismissed.

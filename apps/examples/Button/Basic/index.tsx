@@ -5,7 +5,7 @@
 import { root } from '@lynx-js/react'
 
 import { Button } from '@lynx-js/lynx-ui-button'
-import { clsx } from 'clsx'
+import clsx from 'clsx'
 
 import './index.css'
 

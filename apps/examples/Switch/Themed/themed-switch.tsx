@@ -12,7 +12,7 @@ import type {
   SwitchThumbProps,
   SwitchTrackProps,
 } from '@lynx-js/lynx-ui-switch'
-import { clsx } from 'clsx'
+import clsx from 'clsx'
 
 const HitSlop = {
   'hit-slop': {

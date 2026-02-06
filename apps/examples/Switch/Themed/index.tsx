@@ -4,7 +4,7 @@
 
 import { root, useState } from '@lynx-js/react'
 
-import { clsx } from 'clsx'
+import clsx from 'clsx'
 
 import {
   ThemedSwitch,

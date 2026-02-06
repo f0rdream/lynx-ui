@@ -10,7 +10,7 @@ import {
   PopoverRoot,
   PopoverTrigger,
 } from '@lynx-js/lynx-ui-popover'
-import { clsx } from 'clsx'
+import clsx from 'clsx'
 
 import './index.css'
 

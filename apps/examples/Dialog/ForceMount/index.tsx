@@ -15,7 +15,7 @@ import {
   DialogView,
 } from '@lynx-js/lynx-ui-dialog'
 import type { PresenceAnimationStatus } from '@lynx-js/lynx-ui-dialog'
-import { clsx } from 'clsx'
+import clsx from 'clsx'
 
 function App() {
   const handleDismissed = () => {

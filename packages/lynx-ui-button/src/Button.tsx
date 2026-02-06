@@ -5,7 +5,7 @@
 import { createContext, useContext, useMemo, useState } from '@lynx-js/react'
 
 import { useMemoizedFn } from '@lynx-js/lynx-ui-common'
-import { clsx } from 'clsx'
+import clsx from 'clsx'
 
 import type { ButtonProps } from './types'
 

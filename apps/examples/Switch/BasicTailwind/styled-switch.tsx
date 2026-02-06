@@ -4,7 +4,7 @@
 
 import { Switch, SwitchThumb, SwitchTrack } from '@lynx-js/lynx-ui-switch'
 import type { SwitchProps } from '@lynx-js/lynx-ui-switch'
-import { clsx } from 'clsx'
+import clsx from 'clsx'
 
 const HitSlop = {
   'hit-slop': {

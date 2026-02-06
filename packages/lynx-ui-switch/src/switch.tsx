@@ -5,7 +5,7 @@
 import { createContext, useContext, useMemo, useState } from '@lynx-js/react'
 import type { ReactNode } from '@lynx-js/react'
 
-import { clsx } from 'clsx'
+import clsx from 'clsx'
 
 import { render } from './render'
 import type {

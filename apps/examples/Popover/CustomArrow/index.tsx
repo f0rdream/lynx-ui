@@ -12,7 +12,7 @@ import {
   PopoverTrigger,
 } from '@lynx-js/lynx-ui-popover'
 import type { PresenceAnimationStatus } from '@lynx-js/lynx-ui-popover'
-import { clsx } from 'clsx'
+import clsx from 'clsx'
 import './index.css'
 
 function App() {

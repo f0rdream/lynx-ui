@@ -3,7 +3,7 @@
 // LICENSE file in the root directory of this source tree.
 
 import { Button as ButtonPrimitives } from '@lynx-js/lynx-ui-button'
-import { clsx } from 'clsx'
+import clsx from 'clsx'
 
 import './styles.css'
 

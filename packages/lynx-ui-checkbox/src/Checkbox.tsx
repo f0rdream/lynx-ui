@@ -10,7 +10,7 @@ import {
   renderContentWithExtraProps,
   useMemoizedFn,
 } from '@lynx-js/lynx-ui-common'
-import { clsx } from 'clsx'
+import clsx from 'clsx'
 
 import { CheckboxContext } from './CheckboxContext'
 import type { CheckboxProps } from './types'
