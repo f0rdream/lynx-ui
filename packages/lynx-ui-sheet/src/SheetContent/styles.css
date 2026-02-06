@@ -1,0 +1,14 @@
+.lynx-ui-sheet-content {
+  width: 100%;
+}
+
+.lynx-ui-sheet-surface {
+  top: 100%;
+  height: 100vh;
+  overflow: hidden;
+  align-self: center;
+  padding: 0;
+  margin: 0;
+  border: none;
+  box-shadow: none;
+}
