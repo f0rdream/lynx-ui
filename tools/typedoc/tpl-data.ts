@@ -59,6 +59,26 @@ const doFindObjectWithTag = (obj, tagName) => {
   return recursiveSearch(obj)
 }
 
+const doCalcObjectLiteralType = children => {
+  if (!children?.length) {
+    return '{}'
+  }
+
+  const props = children.map(child => {
+    const optional = child.flags?.isOptional ? '?' : ''
+    return `${child.name}${optional}: ${doTypeCalc(child.type)}`
+  })
+
+  return `{ ${props.join('; ')} }`
+}
+
+const doCalcArrayType = elementType => {
+  const result = doTypeCalc(elementType)
+  return ['union', 'intersection'].includes(elementType?.type)
+    ? `(${result})[]`
+    : `${result}[]`
+}
+
 const doSingleTypeCalc = t => {
   try {
     const { type, name } = t
@@ -68,13 +88,19 @@ const doSingleTypeCalc = t => {
       case 'reference':
         return name
       case 'array':
-        return `${t.elementType.name}[]`
+        return doCalcArrayType(t.elementType)
+      case 'tuple':
+        return `[${t.elements?.map(doTypeCalc).join(', ') ?? ''}]`
+      case 'intersection':
+        return t.types?.map(doSingleTypeCalc).join(' & ') ?? 'unknown'
       case 'literal':
         return t.value
       case 'templateLiteral':
         return t.head + t.tail?.map(ti => ti?.[1]).join(',')
+      case 'reflection':
+        return doCalcReflectionType(t.declaration)
       default:
-        return t
+        return name ?? type ?? 'unknown'
     }
   } catch (e) {
     throw e
@@ -105,7 +131,7 @@ const doCalcReflectionType = declaration => {
       return `(${doCalcParams(parameters)}) => ${doSingleTypeCalc(type)}`
     }
 
-    return 'Record<string, unknown>'
+    return doCalcObjectLiteralType(declaration.children)
   } catch (e) {
     throw e
   }
@@ -120,20 +146,24 @@ const doTypeCalc = t => {
       case 'reference':
         return name
       case 'array':
-        return `${t.elementType.name}[]`
+        return doCalcArrayType(t.elementType)
+      case 'tuple':
+        return `[${t.elements?.map(doTypeCalc).join(', ') ?? ''}]`
       case 'templateLiteral':
         return t.head + t.tail?.map(ti => ti?.[1]).join(',')
       case 'union':
         return doCalcUnionType(types)
+      case 'intersection':
+        return types?.map(doSingleTypeCalc).join(' & ') ?? 'unknown'
       case 'reflection':
         return doCalcReflectionType(declaration)
       default:
-        return t
+        return name ?? type ?? 'unknown'
     }
   } catch (e) {
     console.log(e)
 
-    return t
+    return 'unknown'
   }
 }
 
@@ -171,7 +201,7 @@ const doDefaultValueCalc = defaultValue => {
   return content
     ?.map(c => {
       const formatValue = doGetDefaultBaseValueString(c.text)
-        || doGetDefaultComplexValueString(c.text)
+        ?? doGetDefaultComplexValueString(c.text)
 
       return formatValue
     })
