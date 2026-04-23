@@ -12,7 +12,8 @@
 - Edge bounce views with `bounceConfig` and release callbacks
 - RTL support via `RTL` (`true` or `'lynx-rtl'`)
 - Fine-grained touch-angle control via `consumeSlideEvent`, and event coordination via `blockNativeEvent`
-- Imperative control with `SwiperRef` (`swipeNext`, `swipePrev`, `swipeTo`, `cancelAnimation`)
+- Imperative control with `SwiperRef` (`swipeNext`, `swipePrev`, `swipeTo`, `scrollTo`, `cancelAnimation`)
+- Main-thread imperative control with `MTSRef` (`disable`, `scrollTo`)
 
 ## 2. AI Coding Guide
 
@@ -209,6 +210,7 @@ function customAnimationFirstScreen(value: number) {
 - `consumeSlideEvent`: angle windows for handling touches; default covers horizontal
 - `blockNativeEvent`: when Swiper is inside other scroll containers
 - `RTL`: `true` or `'lynx-rtl'`
+- `MTSRef`: main-thread imperative ref for `disable` and offset-based `scrollTo`
 - `onChange`, `onSwipeStart`, `onSwipeStop`, `main-thread:onOffsetChange`
 - `main-thread:easing`, `main-thread:customAnimation`, `customAnimationFirstScreen`
 
@@ -222,7 +224,17 @@ interface SwiperRef {
     index: number,
     options?: { animate?: boolean, onFinished?: () => void },
   ): void
+  scrollTo(
+    options: { offset: number, animate?: boolean, onFinished?: () => void },
+  ): void
   cancelAnimation(): void // use with caution
+}
+
+interface SwiperMTSRef {
+  disable(disabled?: boolean): void
+  scrollTo(
+    options: { offset: number, animate?: boolean, onFinished?: () => void },
+  ): void
 }
 ```
 

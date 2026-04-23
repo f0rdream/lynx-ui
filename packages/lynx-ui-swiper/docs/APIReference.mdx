@@ -1,9 +1,9 @@
 import { UIApiTable } from "@lynx-ui/index";
 
-  
+
 ## SwiperProps
-    
-  
+
+
 <UIApiTable source={[
   {
     "name": "autoPlay",
@@ -312,6 +312,23 @@ import { UIApiTable } from "@lynx-ui/index";
     "docTypeFallback": null
   },
   {
+    "name": "MTSRef",
+    "type": "RefObject",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Main-thread imperative ref for Swiper.\nUse it to control Swiper from main-thread functions."
+      }
+    ],
+    "summary_zh": "Swiper 的主线程命令式 ref。可在主线程函数中控制 Swiper。",
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
     "name": "offsetLimit",
     "type": {
       "type": "tuple",
@@ -501,7 +518,7 @@ import { UIApiTable } from "@lynx-ui/index";
     "docTypeFallback": null
   }
 ]}/>
-      
+
 
 ### RenderFunctionProps
 
@@ -544,8 +561,8 @@ import { UIApiTable } from "@lynx-ui/index";
     "docTypeFallback": null
   }
 ]}/>
-    
-      
+
+
 
 ### BounceConfig
 
@@ -671,8 +688,8 @@ import { UIApiTable } from "@lynx-ui/index";
     "docTypeFallback": null
   }
 ]}/>
-    
-      
+
+
 
 ### onBounceParams
 
@@ -703,8 +720,65 @@ import { UIApiTable } from "@lynx-ui/index";
     "docTypeFallback": null
   }
 ]}/>
-    
-      
+
+
+
+### ScrollToOptions
+
+
+<UIApiTable source={[
+  {
+    "name": "animate",
+    "type": "boolean",
+    "summary": null,
+    "summary_zh": "",
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  },
+  {
+    "name": "offset",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Target Swiper offset. It uses the same coordinate as "
+      },
+      {
+        "kind": "code",
+        "text": "`main-thread:onOffsetChange`"
+      },
+      {
+        "kind": "text",
+        "text": "."
+      }
+    ],
+    "summary_zh": "目标 Swiper 偏移量。该值与 `main-thread:onOffsetChange` 使用同一坐标系。",
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "onFinished",
+    "type": "() => void",
+    "summary": null,
+    "summary_zh": "",
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+
 
 ### SwipeToOptions
 
@@ -735,8 +809,8 @@ import { UIApiTable } from "@lynx-ui/index";
     "docTypeFallback": null
   }
 ]}/>
-    
-      
+
+
 
 ## SwiperRef
 <UIApiTable source={[
@@ -750,6 +824,23 @@ import { UIApiTable } from "@lynx-ui/index";
       }
     ],
     "summary_zh": "取消当前正在运行的动画。谨慎使用，可能会破坏内部状态。",
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "scrollTo",
+    "type": "(options: ScrollToOptions) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Scroll to a target offset."
+      }
+    ],
+    "summary_zh": "滚动到指定偏移量。",
     "defaultValue": "",
     "isOption": false,
     "isSupportIOS": true,
@@ -809,5 +900,43 @@ import { UIApiTable } from "@lynx-ui/index";
     "docTypeFallback": null
   }
 ]}/>
-  
-  
+
+
+## SwiperMTSRef
+<UIApiTable source={[
+  {
+    "name": "disable",
+    "type": "(disabled: boolean) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Disable or enable touch swiping from the main thread.\nCalling without an argument disables touch swiping."
+      }
+    ],
+    "summary_zh": "在主线程禁用或启用触摸滑动。不传参数时禁用触摸滑动。",
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "scrollTo",
+    "type": "(options: ScrollToOptions) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Scroll to a target offset from the main thread."
+      }
+    ],
+    "summary_zh": "在主线程滚动到指定偏移量。",
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>
+

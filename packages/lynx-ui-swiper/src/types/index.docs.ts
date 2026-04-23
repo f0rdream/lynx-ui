@@ -2,7 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import type { ReactElement } from '@lynx-js/react'
+import type { ReactElement, RefObject } from '@lynx-js/react'
 
 import type { CSSProperties } from '@lynx-js/types'
 
@@ -134,6 +134,15 @@ export interface SwiperProps<T> {
    * @zh Swiper偏移量改变时的回调函数。应该是一个主线程函数
    */
   'main-thread:onOffsetChange'?: (offset: number) => void
+  /**
+   * Main-thread imperative ref for Swiper.
+   * Use it to control Swiper from main-thread functions.
+   * @Android
+   * @iOS
+   * @Harmony
+   * @zh Swiper 的主线程命令式 ref。可在主线程函数中控制 Swiper。
+   */
+  MTSRef?: RefObject<SwiperMTSRef>
   /**
    * Custom easing function for paging effect
    * @Android
@@ -352,6 +361,17 @@ export interface SwipeToOptions {
   onFinished?: () => void
 }
 
+export interface ScrollToOptions extends SwipeToOptions {
+  /**
+   * Target Swiper offset. It uses the same coordinate as `main-thread:onOffsetChange`.
+   * @Android
+   * @iOS
+   * @Harmony
+   * @zh 目标 Swiper 偏移量。该值与 `main-thread:onOffsetChange` 使用同一坐标系。
+   */
+  offset: number
+}
+
 export interface BounceConfig {
   /**
    * Whether to enable bounces. Ignored when loop is true.
@@ -426,6 +446,14 @@ export interface SwiperRef {
    */
   swipeTo: (index: number, options?: SwipeToOptions) => void
   /**
+   * Scroll to a target offset.
+   * @Android
+   * @iOS
+   * @Harmony
+   * @zh 滚动到指定偏移量。
+   */
+  scrollTo: (options: ScrollToOptions) => void
+  /**
    * Swiper to next item
    * @Android
    * @iOS
@@ -451,6 +479,26 @@ export interface SwiperRef {
    * @zh 取消当前正在运行的动画。谨慎使用，可能会破坏内部状态。
    */
   cancelAnimation: () => void
+}
+
+export interface SwiperMTSRef {
+  /**
+   * Disable or enable touch swiping from the main thread.
+   * Calling without an argument disables touch swiping.
+   * @Android
+   * @iOS
+   * @Harmony
+   * @zh 在主线程禁用或启用触摸滑动。不传参数时禁用触摸滑动。
+   */
+  disable: (disabled?: boolean) => void
+  /**
+   * Scroll to a target offset from the main thread.
+   * @Android
+   * @iOS
+   * @Harmony
+   * @zh 在主线程滚动到指定偏移量。
+   */
+  scrollTo: (options: ScrollToOptions) => void
 }
 
 export interface onBounceParams {

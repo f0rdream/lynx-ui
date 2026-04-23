@@ -5,4 +5,9 @@
 export { Swiper } from './Swiper'
 export { SwiperItem } from './SwiperItem'
 export type { SwiperItemProps } from './SwiperItem'
-export type { SwiperProps, SwiperRef } from './types'
+export type {
+  ScrollToOptions,
+  SwiperMTSRef,
+  SwiperProps,
+  SwiperRef,
+} from './types'

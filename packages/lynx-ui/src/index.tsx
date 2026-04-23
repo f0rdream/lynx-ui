@@ -229,7 +229,12 @@ export type {
 // swiper
 export { Swiper, SwiperItem } from '@lynx-js/lynx-ui-swiper'
 export type { SwiperItemProps } from '@lynx-js/lynx-ui-swiper'
-export type { SwiperProps, SwiperRef } from '@lynx-js/lynx-ui-swiper'
+export type {
+  ScrollToOptions,
+  SwiperMTSRef,
+  SwiperProps,
+  SwiperRef,
+} from '@lynx-js/lynx-ui-swiper'
 
 // switch
 export { Switch, SwitchThumb, SwitchTrack } from '@lynx-js/lynx-ui-switch'

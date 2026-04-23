@@ -6,7 +6,9 @@ import type { CSSProperties, MainThread } from '@lynx-js/types'
 
 import type {
   BounceConfig,
+  ScrollToOptions,
   SwipeToOptions,
+  SwiperMTSRef,
   SwiperPropsReal as SwiperProps,
   SwiperRef,
   onBounceParams,
@@ -98,8 +100,10 @@ export interface OffsetLimitResult {
 
 export type {
   BounceConfig,
-  SwiperRef,
   onBounceParams,
+  ScrollToOptions,
   SwipeToOptions,
+  SwiperMTSRef,
+  SwiperRef,
   SwiperProps,
 }

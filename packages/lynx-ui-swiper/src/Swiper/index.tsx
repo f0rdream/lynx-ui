@@ -11,7 +11,10 @@ import {
 } from '@lynx-js/react'
 import type { ForwardedRef } from '@lynx-js/react'
 
-import { useTouchEmulation } from '@lynx-js/react-use'
+import {
+  useMainThreadImperativeHandle,
+  useTouchEmulation,
+} from '@lynx-js/react-use'
 import type { MainThread } from '@lynx-js/types'
 
 import { LOOP_COUNT } from '../const'
@@ -61,6 +64,7 @@ const Swiper = forwardRef(
       offsetLimit: _offsetLimit,
       bounceConfig,
       children,
+      MTSRef,
       'main-thread:easing': easing = easeOut,
       'main-thread:customAnimation': customAnimation,
       'main-thread:onOffsetChange': onOffsetChange,
@@ -264,6 +268,9 @@ const Swiper = forwardRef(
       swipeNext,
       swipePrev,
       swipeTo,
+      scrollTo,
+      scrollToMTS,
+      disableMTS,
       resetOffsetMT,
       cancelAnimationJS,
       startAutoPlayMT,
@@ -319,10 +326,23 @@ const Swiper = forwardRef(
       onTouchStartMT: handleTouchStart,
     })
 
+    useMainThreadImperativeHandle(
+      MTSRef,
+      () => {
+        'main thread'
+        return {
+          disable: disableMTS,
+          scrollTo: scrollToMTS,
+        }
+      },
+      [],
+    )
+
     useImperativeHandle(ref, () => ({
       swipeNext,
       swipePrev,
       swipeTo,
+      scrollTo,
       cancelAnimation: cancelAnimationJS,
     }))
 

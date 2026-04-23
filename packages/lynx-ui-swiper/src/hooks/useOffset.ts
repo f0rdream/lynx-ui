@@ -23,6 +23,7 @@ import type {
   CompoundModeConfig,
   OffsetLimitResult,
   ResetOptions,
+  ScrollToOptions,
   SwipeToOptions,
   SwiperProps,
   onBounceParams,
@@ -139,6 +140,7 @@ function useOffset(
   const touchStartCrossAxisRef = useMainThreadRef<number>(0)
   const lastScrollOffsetRef = useMainThreadRef<number>(getInitialOffset())
   const offsetRef = useMainThreadRef<number>(getInitialOffset())
+  const disabledRef = useMainThreadRef<boolean>(false)
   // To record the previous index before offset change
   const prevIndexRef = useMainThreadRef<number>(initialIndex)
   const { velocityTouchMove, velocityTouchStart, getVelocity } = useVelocity({
@@ -349,6 +351,38 @@ function useOffset(
     }
   }
 
+  function scrollToMTS(options: ScrollToOptions) {
+    'main thread'
+    if (dataCount === 0) {
+      setSwipeEndMT()
+      return
+    }
+
+    const { offset: finalOffset } = calcLimitCompact(options.offset)
+    const currentOffset = offsetRef.current
+    setSwipeStartMT()
+
+    if (finalOffset < currentOffset) {
+      overrideDirection(SwipeDirection.NORMAL)
+    } else if (finalOffset > currentOffset) {
+      overrideDirection(SwipeDirection.REVERT)
+    } else {
+      overrideDirection(SwipeDirection.NONE)
+    }
+
+    if (options.animate) {
+      easingTo(currentOffset, finalOffset, () => {
+        if (options.onFinished) {
+          options.onFinished()
+        }
+        setSwipeEndMT()
+      })
+    } else {
+      setOffset(finalOffset)
+      setSwipeEndMT()
+    }
+  }
+
   function swipeNextMTS(options?: SwipeToOptions) {
     'main thread'
 
@@ -432,6 +466,10 @@ function useOffset(
     runOnMainThread(swipeToMTS)(index, options)
   }
 
+  function scrollTo(options: ScrollToOptions) {
+    runOnMainThread(scrollToMTS)(options)
+  }
+
   function handleOnBounce(params: onBounceParams) {
     if (params.type === 'start' && onStartBounceItemBounce) {
       onStartBounceItemBounce(params)
@@ -463,6 +501,19 @@ function useOffset(
     duration,
     dataCount,
   })
+
+  function disableMTS(disabled?: boolean) {
+    'main thread'
+    const nextDisabled = disabled ?? true
+    disabledRef.current = nextDisabled
+    if (nextDisabled) {
+      cancelAnimation()
+      setSwipeEndMT()
+      pauseAutoPlayMT()
+    } else {
+      startAutoPlayMT()
+    }
+  }
 
   function handleVelocity() {
     'main thread'
@@ -496,6 +547,10 @@ function useOffset(
 
   function handleTouchStart(event: MainThread.TouchEvent) {
     'main thread'
+    if (disabledRef.current) {
+      return
+    }
+
     lastScrollOffsetRef.current = offsetRef.current
 
     touchStartRef.current = event.detail.x
@@ -512,6 +567,10 @@ function useOffset(
 
   function handleTouchMove(event: MainThread.TouchEvent) {
     'main thread'
+
+    if (disabledRef.current) {
+      return
+    }
 
     // Guard against empty data to prevent state corruption
     if (dataCount === 0) {
@@ -535,6 +594,10 @@ function useOffset(
 
   function handleTouchEnd(event: MainThread.TouchEvent) {
     'main thread'
+    if (disabledRef.current) {
+      return
+    }
+
     let offset = offsetRef.current
 
     handleBounceCallback(offset)
@@ -599,8 +662,11 @@ function useOffset(
     handleTouchMove,
     handleTouchEnd,
     swipeTo,
+    scrollTo,
     swipeNext,
     swipePrev,
+    scrollToMTS,
+    disableMTS,
     resetOffsetMT,
     cancelAnimationJS,
   }
