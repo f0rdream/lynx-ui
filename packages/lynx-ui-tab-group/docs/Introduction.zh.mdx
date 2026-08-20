@@ -1,0 +1,33 @@
+import { Go } from "@lynx/index";
+
+## 基础用法
+
+可以组合 `TabsRoot`、`TabsBar`、`TabsItem` 和 `TabsIndicator` 构建标签导航。
+
+<Go
+  example="TabGroup"
+  defaultEntryName="PrimitivesTabsBasic"
+  defaultFile="Basic/index.tsx"
+  entry="Basic"
+/>
+
+## 指示器动画
+
+在 `TabsRoot` 上配置 `indicatorAnimation` 来设置指示器切换动画。
+
+<Go
+  example="TabGroup"
+  defaultEntryName="PrimitivesTabsMotion"
+  defaultFile="Motion/index.tsx"
+  entry="Motion"
+/>
+
+## 结构
+
+```jsx
+<TabsRoot>
+  <TabsBar data={tabs} renderTabItem={renderTabItem}>
+    <TabsIndicator />
+  </TabsBar>
+</TabsRoot>
+```

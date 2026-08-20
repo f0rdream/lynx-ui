@@ -1,0 +1,33 @@
+import { Go } from "@lynx/index";
+
+## Basic Usage
+
+`TabsRoot`, `TabsBar`, `TabsItem`, and `TabsIndicator` can be composed to build tab navigation.
+
+<Go
+  example="TabGroup"
+  defaultEntryName="PrimitivesTabsBasic"
+  defaultFile="Basic/index.tsx"
+  entry="Basic"
+/>
+
+## Indicator Animation
+
+Configure the indicator transition with `indicatorAnimation` on `TabsRoot`.
+
+<Go
+  example="TabGroup"
+  defaultEntryName="PrimitivesTabsMotion"
+  defaultFile="Motion/index.tsx"
+  entry="Motion"
+/>
+
+## Structure
+
+```jsx
+<TabsRoot>
+  <TabsBar data={tabs} renderTabItem={renderTabItem}>
+    <TabsIndicator />
+  </TabsBar>
+</TabsRoot>
+```
