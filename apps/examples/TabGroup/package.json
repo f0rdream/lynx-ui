@@ -31,6 +31,8 @@
   "dependencies": {
     "@lynx-js/luna-styles": "workspace:*",
     "@lynx-js/lynx-ui": "workspace:*",
+    "@lynx-js/lynx-ui-tab-group": "workspace:*",
+    "@lynx-js/motion": "catalog:",
     "@lynx-js/react": "catalog:"
   },
   "devDependencies": {

@@ -765,6 +765,12 @@ importers:
       '@lynx-js/lynx-ui':
         specifier: workspace:*
         version: link:../../../packages/lynx-ui
+      '@lynx-js/lynx-ui-swiper':
+        specifier: workspace:*
+        version: link:../../../packages/lynx-ui-swiper
+      '@lynx-js/motion':
+        specifier: 'catalog:'
+        version: 0.0.3(@lynx-js/react@0.123.1(@lynx-js/types@4.1.0)(@types/react@18.3.28))(@lynx-js/types@4.1.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@lynx-js/react':
         specifier: 'catalog:'
         version: 0.123.1(@lynx-js/types@4.1.0)(@types/react@18.3.28)
@@ -836,6 +842,12 @@ importers:
       '@lynx-js/lynx-ui':
         specifier: workspace:*
         version: link:../../../packages/lynx-ui
+      '@lynx-js/lynx-ui-tab-group':
+        specifier: workspace:*
+        version: link:../../../packages/lynx-ui-tab-group
+      '@lynx-js/motion':
+        specifier: 'catalog:'
+        version: 0.0.3(@lynx-js/react@0.123.1(@lynx-js/types@4.1.0)(@types/react@18.3.28))(@lynx-js/types@4.1.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@lynx-js/react':
         specifier: 'catalog:'
         version: 0.123.1(@lynx-js/types@4.1.0)(@types/react@18.3.28)
