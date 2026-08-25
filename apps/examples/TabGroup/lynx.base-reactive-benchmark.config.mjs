@@ -8,9 +8,8 @@ import { exampleConfig } from '../../../tools/configs/exampleConfig.mjs'
 export default await benchmarkReactLynx(
   exampleConfig(
     {
-      SwiperBenchmarkBaseline: './Benchmark/Baseline.tsx',
-      SwiperBenchmarkWorkaround: './Benchmark/Workaround.tsx',
-      SwiperBenchmarkObject: './Benchmark/Object.tsx',
+      TabGroupBenchmarkBaseline: './Benchmark/Baseline.tsx',
+      TabGroupBenchmarkWorkaround: './Benchmark/Workaround.tsx',
     },
     { needWeb: false },
   ),

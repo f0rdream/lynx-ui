@@ -5,7 +5,10 @@
 import { benchmarkReactLynx } from '../../../tools/configs/benchmarkReactLynx.mjs'
 import { exampleConfig } from '../../../tools/configs/exampleConfig.mjs'
 
-export default await benchmarkReactLynx(exampleConfig(
-  { SwiperBasic: './Basic/index.tsx' },
-  { needWeb: false },
-))
+export default await benchmarkReactLynx(
+  exampleConfig(
+    { SwiperBenchmarkPlain: './Benchmark/Plain.tsx' },
+    { needWeb: false },
+  ),
+  { profile: true },
+)

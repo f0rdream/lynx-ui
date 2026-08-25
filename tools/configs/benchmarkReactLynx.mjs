@@ -29,6 +29,21 @@ export async function benchmarkReactLynx(config, options = {}) {
   )
 
   const plugins = config.plugins?.slice(0, -1) ?? []
+  if (options.profile) {
+    const { pluginRepoFilePath } = await import(
+      pathToFileURL(path.join(
+        stackRoot,
+        'benchmark/react/plugins/pluginRepoFilePath.mjs',
+      )).href
+    )
+    const { pluginScriptLoad } = await import(
+      pathToFileURL(path.join(
+        stackRoot,
+        'benchmark/react/plugins/pluginScriptLoad.mjs',
+      )).href
+    )
+    plugins.unshift(pluginRepoFilePath(), pluginScriptLoad())
+  }
   const reactPlugins = pluginReactLynx({
     enableCSSSelector: true,
     enableCSSInheritance: true,
@@ -86,6 +101,23 @@ export async function benchmarkReactLynx(config, options = {}) {
   return {
     ...config,
     plugins,
+    source: options.profile
+      ? {
+        ...config.source,
+        entry: Object.fromEntries(
+          Object.entries(config.source?.entry ?? {}).map(([name, entry]) => [
+            name,
+            [
+              path.join(stackRoot, 'benchmark/react/src/patchProfile.ts'),
+              ...(Array.isArray(entry) ? entry : [entry]),
+            ],
+          ]),
+        ),
+      }
+      : config.source,
+    performance: options.profile
+      ? { ...config.performance, profile: true }
+      : config.performance,
     tools: {
       ...config.tools,
       rspack: {

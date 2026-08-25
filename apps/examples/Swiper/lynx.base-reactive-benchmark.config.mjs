@@ -10,7 +10,6 @@ export default await benchmarkReactLynx(
     {
       SwiperBenchmarkBaseline: './Benchmark/Baseline.tsx',
       SwiperBenchmarkWorkaround: './Benchmark/Workaround.tsx',
-      SwiperBenchmarkObject: './Benchmark/Object.tsx',
     },
     { needWeb: false },
   ),

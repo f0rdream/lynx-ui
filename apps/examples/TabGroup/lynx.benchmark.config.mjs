@@ -14,5 +14,5 @@ export default await benchmarkReactLynx(
     },
     { needWeb: false },
   ),
-  { motion: true },
+  { motion: true, profile: true },
 )

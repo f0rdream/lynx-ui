@@ -7,6 +7,7 @@ import type { MainThread } from '@lynx-js/types'
 
 import { SwiperBenchmarkPage } from './Page'
 import { ProbeView } from './ProbeView'
+import { StopAfterHydration } from './Stop'
 
 function App(): JSX.Element {
   const probeRef = useMainThreadRef<MainThread.Element>(null)
@@ -26,4 +27,11 @@ function App(): JSX.Element {
   )
 }
 
-root.render(<App />)
+runAfterLoadScript(() => {
+  root.render(
+    <>
+      <App />
+      <StopAfterHydration />
+    </>,
+  )
+})

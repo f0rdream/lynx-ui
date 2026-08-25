@@ -37,8 +37,7 @@ export function SwiperBenchmarkPage({ probe }: Props): JSX.Element {
           ref={swiperRef}
           data={itemArr}
           itemWidth={itemWidths[itemWidthsIndex] ?? 0}
-          containerWidth={lynx.__globalProps.screenWidth - 32
-            || SystemInfo.pixelWidth / SystemInfo.pixelRatio - 32}
+          containerWidth={1048}
           duration={500}
           initialIndex={INITIAL_INDEX}
           onChange={setCurrentIndex}

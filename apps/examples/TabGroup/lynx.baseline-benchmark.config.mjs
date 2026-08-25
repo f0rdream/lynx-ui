@@ -5,7 +5,10 @@
 import { benchmarkReactLynx } from '../../../tools/configs/benchmarkReactLynx.mjs'
 import { exampleConfig } from '../../../tools/configs/exampleConfig.mjs'
 
-export default await benchmarkReactLynx(exampleConfig(
-  { PrimitivesTabsBasic: './Basic/index.tsx' },
-  { needWeb: false },
-))
+export default await benchmarkReactLynx(
+  exampleConfig(
+    { TabGroupBenchmarkPlain: './Benchmark/Plain.tsx' },
+    { needWeb: false },
+  ),
+  { profile: true },
+)

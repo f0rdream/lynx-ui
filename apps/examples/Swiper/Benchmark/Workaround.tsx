@@ -6,14 +6,16 @@ import type { MotionValue } from '@lynx-js/motion'
 import {
   root,
   runOnMainThread,
-  useEffect,
   useMainThreadRef,
+  useMemo,
 } from '@lynx-js/react'
+import { runWorkletCtx } from '@lynx-js/react/worklet-runtime/bindings'
 import type { MainThread } from '@lynx-js/types'
 
 import { SwiperBenchmarkPage } from './Page'
 import { motionValue } from './MotionRuntime' with { runtime: 'shared' }
 import { ProbeView } from './ProbeView'
+import { StopAfterHydration } from './Stop'
 
 function App(): JSX.Element {
   const probeRef = useMainThreadRef<MainThread.Element>(null)
@@ -24,8 +26,12 @@ function App(): JSX.Element {
     valueRef.current = motionValue(1)
   }
 
-  useEffect(() => {
-    void runOnMainThread(initializeValue)()
+  useMemo(() => {
+    if (__BACKGROUND__) {
+      void runOnMainThread(initializeValue)()
+    } else {
+      runWorkletCtx(initializeValue, [])
+    }
   }, [])
 
   function onTap() {
@@ -46,4 +52,11 @@ function App(): JSX.Element {
   )
 }
 
-root.render(<App />)
+runAfterLoadScript(() => {
+  root.render(
+    <>
+      <App />
+      <StopAfterHydration />
+    </>,
+  )
+})

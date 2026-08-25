@@ -14,6 +14,7 @@ import type { MainThread } from '@lynx-js/types'
 import { motionValue } from './MotionRuntime' with { runtime: 'shared' }
 import { TabGroupBenchmarkPage } from './Page'
 import { ProbeView } from './ProbeView'
+import { StopAfterHydration } from './Stop'
 
 const motionValueType = defineMainThreadObjectType<number, MotionValue<number>>(
   {
@@ -43,4 +44,11 @@ function App(): JSX.Element {
   )
 }
 
-root.render(<App />)
+runAfterLoadScript(() => {
+  root.render(
+    <>
+      <App />
+      <StopAfterHydration />
+    </>,
+  )
+})
