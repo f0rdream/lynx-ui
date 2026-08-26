@@ -104,6 +104,10 @@ export async function benchmarkReactLynx(config, options = {}) {
     source: options.profile
       ? {
         ...config.source,
+        define: {
+          ...config.source?.define,
+          __REPO_FILEPATH__: JSON.stringify('lynx-ui/real-page-benchmark'),
+        },
         entry: Object.fromEntries(
           Object.entries(config.source?.entry ?? {}).map(([name, entry]) => [
             name,

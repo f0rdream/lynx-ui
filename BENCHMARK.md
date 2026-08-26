@@ -1,35 +1,31 @@
-# MainThreadObject benchmark on lynx-ui pages
+# MainThreadObject benchmark on real lynx-ui pages
 
-This fixture measures `MainThreadObject` on two existing lynx-ui examples:
-Swiper Basic and TabGroup Basic. It is a one-time design comparison, not a
-permanent performance regression suite.
+This temporary fixture measures the MainThreadObject pull request on the real
+Swiper and TabGroup examples. It is a one-time design comparison, not a
+permanent lynx-ui performance suite.
 
 ## Revisions
 
 - lynx-ui source: `3c98927864d926588d51d0d708977dba625b08e8`
-- lynx-stack comparison parent: `d8f80cd019ecafddbacb7749e16a3eb293b28727`
-- lynx-stack implementation: `2c05c4e5acaa1b6f8b1af2b4b2ead2664191ed83`
+- lynx-stack base: `3442218110d892670e14bb6332e992d4a7840ac7`
+- lynx-stack head: `178eeb0ca98198f574dc630793572f93d9b01155`
 
-Both lynx-stack revisions were fully built before the lynx-ui bundles were
-created. The benchmark configuration pins Rspeedy, the ReactLynx compiler and
-runtime, and Motion to the selected `LYNX_STACK_ROOT`. It also compiles the
-lynx-ui components from this checkout's source.
+Both lynx-stack revisions were fully built before building the fixtures. The
+configuration pins Rspeedy, the ReactLynx compiler/runtime, and Motion to the
+selected `LYNX_STACK_ROOT` and compiles the lynx-ui components from source.
 
-## Compared pages
+## Comparisons
 
-The unchanged-page comparison builds the existing Swiper Basic and TabGroup
-Basic entries at the parent and implementation revisions. Neither page imports
-or uses `MainThreadObject`.
+Only two comparisons are made for each component:
 
-The reactive comparison keeps each real component tree and inserts the same
-140 x 40 probe in three variants:
+1. Base plain page versus head plain page. The source is identical and does not
+   import MotionValue or MainThreadObject. This measures the global cost of
+   landing the pull request.
+2. Head MotionValue workaround versus head MainThreadObject. Both use the same
+   head runtime, real `motion-dom` MotionValue, component tree, element ref,
+   main-thread tap, and native transform update. This isolates API adoption.
 
-1. A numeric `MainThreadRef` baseline without Motion.
-2. A real `motion-dom` MotionValue created after mount and stored in a
-   `MainThreadRef`.
-3. The same real MotionValue created through `MainThreadObject`.
-
-The workaround is:
+The workaround stores the MotionValue in `MainThreadRef`:
 
 ```tsx
 const valueRef = useMainThreadRef<MotionValue<number>>(null)
@@ -39,21 +35,16 @@ function initializeValue() {
   valueRef.current = motionValue(1)
 }
 
-useEffect(() => {
-  void runOnMainThread(initializeValue)()
+useMemo(() => {
+  if (__BACKGROUND__) {
+    void runOnMainThread(initializeValue)()
+  } else {
+    runWorkletCtx(initializeValue, [])
+  }
 }, [])
-
-function onTap() {
-  'main thread'
-  const value = valueRef.current
-  if (!value) return
-  const next = value.get() === 1 ? 1.1 : 1
-  value.set(next)
-  probeRef.current?.setStyleProperties({ transform: `scale(${next})` })
-}
 ```
 
-The direct-object variant is:
+The MainThreadObject variant replaces only that ownership and transport:
 
 ```tsx
 const motionValueType = defineMainThreadObjectType<number, MotionValue<number>>({
@@ -65,114 +56,69 @@ const motionValueType = defineMainThreadObjectType<number, MotionValue<number>>(
 })
 
 const value = useMainThreadObject(motionValueType, 1)
-
-function onTap() {
-  'main thread'
-  const next = value.get() === 1 ? 1.1 : 1
-  value.set(next)
-  probeRef.current?.setStyleProperties({ transform: `scale(${next})` })
-}
 ```
 
-Both variants use Motion's packaged shared-runtime adapter:
+Both probes use the same update:
 
-```ts
-import '@lynx-js/motion/dist/polyfill/shim.js'
-export { motionValue } from '@lynx-js/motion/dist/polyfill/MotionValue.js'
+```tsx
+const next = value.get() === 1 ? 1.1 : 1
+value.set(next)
+probeRef.current?.setStyleProperties({ transform: `scale(${next})` })
 ```
 
-## Build procedure
+## Bundle-size procedure and results
 
-Use Node.js 24 and the repository-pinned pnpm version. Build each exact
-lynx-stack checkout first, then build from each example directory:
+Each condition was independently built three times as a production Lynx
+bundle. Raw filesystem sizes were identical. `gzip -9` varied by at most two
+bytes; the table consistently uses run 3.
 
-```sh
-LYNX_STACK_ROOT=/absolute/path/to/lynx-stack \
-  pnpm exec rspeedy build --config lynx.baseline-benchmark.config.mjs
+| Comparison | From raw | To raw | Raw delta | From gzip | To gzip | Gzip delta |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| TabGroup base plain -> head plain | 211,670 B | 216,310 B | +4,640 B | 85,935 B | 88,171 B | +2,236 B |
+| TabGroup head workaround -> head object | 304,047 B | 309,550 B | +5,503 B | 127,112 B | 129,267 B | +2,155 B |
+| Swiper base plain -> head plain | 183,546 B | 188,091 B | +4,545 B | 73,237 B | 75,494 B | +2,257 B |
+| Swiper head workaround -> head object | 278,927 B | 284,433 B | +5,506 B | 117,310 B | 119,496 B | +2,186 B |
 
-LYNX_STACK_ROOT=/absolute/path/to/lynx-stack \
-  pnpm exec rspeedy build --config lynx.benchmark.config.mjs
-```
+## Real-device startup procedure
 
-The first command produces the unchanged Basic page. The second produces the
-baseline, workaround, and object bundles. Bundle sizes are exact filesystem
-bytes and `gzip -9 -c` bytes.
+- OSS LynxExplorer on one Android 10 `aries_10` device.
+- Production bundles served through ADB-reversed localhost.
+- Agent Lynx/Perfetto tracing starts before each batch of page opens.
+- 24 balanced cycles per condition: 192 page starts across eight conditions.
+- A balanced Latin square makes every condition occupy every launch position
+  three times and balances first-order carry-over.
+- Every start contains exactly one FMP, background render, serialization,
+  hydration, and background-load span, plus two MTS render pairs.
+- No trace was truncated and every `Tracing.tracingComplete` reported no data
+  loss.
+- Results are paired within each cycle and report median deltas with bootstrapped
+  95% confidence intervals.
 
-## Bundle results
+Positive values mean the right-hand condition took longer.
 
-| Page and variant | Raw | gzip -9 |
-| --- | ---: | ---: |
-| Swiper parent unchanged | 179,979 B | 69,951 B |
-| Swiper implementation unchanged | 184,484 B | 72,083 B |
-| Swiper probe baseline | 185,949 B | 72,687 B |
-| Swiper workaround | 275,835 B | 113,692 B |
-| Swiper object | 281,454 B | 115,799 B |
-| TabGroup parent unchanged | 208,187 B | 82,822 B |
-| TabGroup implementation unchanged | 212,701 B | 84,926 B |
-| TabGroup probe baseline | 214,105 B | 85,521 B |
-| TabGroup workaround | 300,868 B | 123,914 B |
-| TabGroup object | 306,481 B | 125,875 B |
+| Comparison | FMP | Initial MTS | Hydration MTS | Background load | `ReactLynx::hydrate` |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| TabGroup head plain - base plain | +0.337 ms [-1.170, 1.320] | +0.225 ms [-0.189, 0.918] | -0.116 ms [-0.403, 0.019] | -0.491 ms [-3.475, 0.365] | -0.006 ms [-0.049, 0.046] |
+| TabGroup head object - head workaround | -0.082 ms [-2.904, 2.362] | -0.065 ms [-2.214, 1.430] | -0.023 ms [-1.492, 0.800] | -0.214 ms [-0.570, 0.531] | -0.230 ms [-0.364, 0.070] |
+| Swiper head plain - base plain | +0.498 ms [-1.752, 3.486] | +0.124 ms [-0.703, 1.954] | **+0.981 ms [0.525, 1.356]** | +0.369 ms [-1.971, 5.755] | -0.282 ms [-1.305, 1.054] |
+| Swiper head object - head workaround | +1.743 ms [-4.097, 10.670] | +0.337 ms [-4.212, 10.876] | -0.005 ms [-0.457, 1.040] | **+1.591 ms [0.016, 5.924]** | -0.032 ms [-0.417, 1.037] |
 
-The unchanged implementation adds 2,132 B gzip to Swiper and 2,104 B gzip to
-TabGroup. On the reactive pages, the object variant adds 2,107 B gzip over the
-workaround for Swiper and 1,961 B gzip for TabGroup. Most reactive bundle cost
-is common Motion runtime: the workaround already adds 41,005 B gzip over the
-Swiper probe baseline and 38,393 B gzip over the TabGroup probe baseline.
+## Interpretation and functional validation
 
-## Real-device procedure
+- No comparison demonstrates an FMP regression.
+- Landing the pull request shows no startup signal on plain TabGroup. Plain
+  Swiper has a repeatable approximately 0.98 ms hydration-MTS increase.
+- Adopting MainThreadObject shows no FMP, MTS-render, or
+  `ReactLynx::hydrate` regression on either page.
+- Swiper MainThreadObject has a 1.59 ms background-load interval signal. Since
+  its direct background render and hydration spans do not increase, this is not
+  evidence of extra `ReactLynx::hydrate` CPU work and should be tracked as a
+  broader load/scheduling signal.
+- The earlier TabGroup approximately 4.1 ms MainThreadObject hydration result
+  did not reproduce after rebasing and reducing the matrix. The current paired
+  median is -0.23 ms and its confidence interval crosses zero.
 
-- OSS LynxExplorer (`com.lynx.explorer`) on one Android 10 `aries_10` sandbox
-  device.
-- Production bundles served from one local HTTP server through ADB reverse.
-- Startup traces captured before page open with Agent Lynx/Perfetto.
-- Five complete counterbalanced cycles, each containing all eight unchanged and
-  reactive conditions.
-- Thirty probe taps per reactive implementation. Update latency is the Perfetto
-  duration of `TouchEventHandler::TriggerFiberElementWorklet`.
-
-The probe rendered without console errors in all four reactive pages. A tap on
-each workaround and object page changed the native style to:
-
-```text
-transform: scale(1.1,1.1)
-```
-
-## Startup results
-
-All figures are medians in milliseconds, with `n=5` complete cycles per
-condition. Load to FMP is `FirstMeaningfulPaint - StartLoad`. Initial and
-hydration MTS use the first and second `mtsRenderStart`/`mtsRenderEnd` pairs.
-Background load is `loadBackgroundEnd - loadBackgroundStart`.
-
-| Condition | Load to FMP | Initial MTS | Hydration MTS | Background load |
-| --- | ---: | ---: | ---: | ---: |
-| Swiper parent | 44.200 | 22.440 | 22.012 | 27.713 |
-| Swiper implementation | 52.009 | 29.713 | 23.318 | 24.710 |
-| TabGroup parent | 28.310 | 8.182 | 2.328 | 26.961 |
-| TabGroup implementation | 24.327 | 8.267 | 2.285 | 26.152 |
-| Swiper workaround | 49.349 | 28.159 | 23.681 | 29.675 |
-| Swiper object | 46.035 | 26.343 | 25.891 | 27.500 |
-| TabGroup workaround | 31.568 | 14.355 | 2.850 | 25.555 |
-| TabGroup object | 26.229 | 9.749 | 2.810 | 29.547 |
-
-Swiper's unchanged page has a `+7.8 ms` median FMP signal while TabGroup moves
-in the opposite direction by `-4.0 ms`. The object variant has a lower median
-FMP than the workaround on both pages. With only five cycles, high run/order
-variance, and conflicting unchanged-page directions, these results establish
-neither a startup regression nor an improvement. They are signals for a
-longer-term regression workload.
-
-Three later attempted cycles were excluded because the trace stream closed
-before `Tracing.tracingComplete`; incomplete traces were not used.
-
-## Update results
-
-| Page and implementation | Mean | p50 | p95 |
-| --- | ---: | ---: | ---: |
-| Swiper workaround | 1.368 ms | 1.322 ms | 1.579 ms |
-| Swiper object | 1.347 ms | 1.295 ms | 1.473 ms |
-| TabGroup workaround | 1.349 ms | 1.284 ms | 1.740 ms |
-| TabGroup object | 1.356 ms | 1.303 ms | 1.548 ms |
-
-This run shows no measured steady-state update penalty from
-`MainThreadObject`.
+All eight pages rendered without console errors. Real ADB touches on both
+MotionValue implementations and both component pages changed the green probe
+from scale 1 to scale 1.1; the captured probe bounds changed from `433x124` to
+`454x130-136` pixels.
