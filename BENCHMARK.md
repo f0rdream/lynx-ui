@@ -94,14 +94,19 @@ bytes; the table consistently uses run 3.
 - Results are paired within each cycle and report median deltas with bootstrapped
   95% confidence intervals.
 
-Positive values mean the right-hand condition took longer.
+Each metric cell is `from median; paired delta [95% CI]`. “From” is the
+absolute median cost of the left-hand condition. The delta is the median of 24
+paired per-cycle differences. Positive deltas mean the right-hand condition
+took longer. Because these are two different median calculations, adding the
+from median and paired delta does not necessarily equal the right-hand
+condition's absolute median.
 
-| Comparison | FMP | Initial MTS | Hydration MTS | Background load | `ReactLynx::hydrate` |
+| Comparison (from -> to) | FMP: from; delta | Initial MTS: from; delta | Hydration MTS: from; delta | Background load: from; delta | `ReactLynx::hydrate`: from; delta |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| TabGroup head plain - base plain | +0.337 ms [-1.170, 1.320] | +0.225 ms [-0.189, 0.918] | -0.116 ms [-0.403, 0.019] | -0.491 ms [-3.475, 0.365] | -0.006 ms [-0.049, 0.046] |
-| TabGroup head object - head workaround | -0.082 ms [-2.904, 2.362] | -0.065 ms [-2.214, 1.430] | -0.023 ms [-1.492, 0.800] | -0.214 ms [-0.570, 0.531] | -0.230 ms [-0.364, 0.070] |
-| Swiper head plain - base plain | +0.498 ms [-1.752, 3.486] | +0.124 ms [-0.703, 1.954] | **+0.981 ms [0.525, 1.356]** | +0.369 ms [-1.971, 5.755] | -0.282 ms [-1.305, 1.054] |
-| Swiper head object - head workaround | +1.743 ms [-4.097, 10.670] | +0.337 ms [-4.212, 10.876] | -0.005 ms [-0.457, 1.040] | **+1.591 ms [0.016, 5.924]** | -0.032 ms [-0.417, 1.037] |
+| TabGroup base plain -> head plain | 21.497 ms; +0.337 ms [-1.170, 1.320] | 8.487 ms; +0.225 ms [-0.189, 0.918] | 2.402 ms; -0.116 ms [-0.403, 0.019] | 26.033 ms; -0.491 ms [-3.475, 0.365] | 1.104 ms; -0.006 ms [-0.049, 0.046] |
+| TabGroup head workaround -> head object | 25.236 ms; -0.082 ms [-2.904, 2.362] | 10.101 ms; -0.065 ms [-2.214, 1.430] | 2.768 ms; -0.023 ms [-1.492, 0.800] | 25.411 ms; -0.214 ms [-0.570, 0.531] | 4.613 ms; -0.230 ms [-0.364, 0.070] |
+| Swiper base plain -> head plain | 41.286 ms; +0.498 ms [-1.752, 3.486] | 22.227 ms; +0.124 ms [-0.703, 1.954] | 20.752 ms; **+0.981 ms [0.525, 1.356]** | 26.835 ms; +0.369 ms [-1.971, 5.755] | 16.835 ms; -0.282 ms [-1.305, 1.054] |
+| Swiper head workaround -> head object | 45.201 ms; +1.743 ms [-4.097, 10.670] | 25.049 ms; +0.337 ms [-4.212, 10.876] | 22.235 ms; -0.005 ms [-0.457, 1.040] | 26.536 ms; **+1.591 ms [0.016, 5.924]** | 15.039 ms; -0.032 ms [-0.417, 1.037] |
 
 ## Interpretation and functional validation
 
