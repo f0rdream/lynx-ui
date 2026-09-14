@@ -103,6 +103,14 @@ jobs:
       runs-on: lynx-ubuntu-24.04-medium
       run: pnpm eslint . --flag v10_config_lookup_from_file
 
+  rslint:
+    name: Rslint
+    needs: build
+    uses: ./.github/workflows/common-test.yml
+    with:
+      runs-on: lynx-ubuntu-24.04-medium
+      run: pnpm run lint:rslint
+
   check-exports:
     name: Check Exports
     needs: build
@@ -202,6 +210,7 @@ jobs:
       - check-exports
       - check-package-types
       - eslint
+      - rslint
       - test-publish
       - test-typos
       - test-vitest
