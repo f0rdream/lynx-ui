@@ -11,6 +11,7 @@ import {
 
 import { mtsLog } from '@lynx-js/lynx-ui-common'
 import { animate, useMotionValueRefEvent } from '@lynx-js/motion/mini'
+import type { CSSProperties, MainThread } from '@lynx-js/types'
 import { clsx } from 'clsx'
 
 import { useTabsContext, useTabsRootContext } from './TabsContext'
@@ -37,8 +38,6 @@ export const TabsIndicator = (props: TabsIndicatorProps) => {
     tabSelectIndex,
     tabsWidthMapMT,
     indicatorOffsetMT,
-    indicatorElementMT,
-    hasRenderedIndicatorMT,
     selectBehavior,
     indicatorAnimation,
     selectTarget,
@@ -48,6 +47,8 @@ export const TabsIndicator = (props: TabsIndicatorProps) => {
   } = useTabsRootContext()
 
   const offsetMotionRef = indicatorOffsetMT
+  const indicatorElementMT = useMainThreadRef<MainThread.Element | null>(null)
+  const hasRenderedIndicatorMT = useMainThreadRef<boolean>(false)
   const tabChangeHandledBySelectTargetMT = useMainThreadRef<number>(-1)
 
   const updateIndicator = (params: { width: number, left: number }) => {
@@ -169,11 +170,20 @@ export const TabsIndicator = (props: TabsIndicatorProps) => {
     })()
   }, [enableRTL])
 
+  const initialDynamicStyle: CSSProperties = enableRTL
+    ? { width: '0px', right: '0px' }
+    : { width: '0px', left: '0px' }
+  const indicatorStyle = typeof customStyle === 'string'
+    ? `${
+      enableRTL ? 'width:0px;right:0px;' : 'width:0px;left:0px;'
+    }${customStyle}`
+    : { ...initialDynamicStyle, ...customStyle }
+
   return (
     <view
       {...indicatorPropsWithoutStyle}
       main-thread:ref={indicatorElementMT}
-      style={customStyle}
+      style={indicatorStyle}
       className={clsx(
         'lynx-ui-tab-group__indicator',
         indicatorPropsClassName,

@@ -1,7 +1,7 @@
 // Copyright 2026 The Lynx Authors. All rights reserved.
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
-import { runOnMainThread, useMemo } from '@lynx-js/react'
+import { useMemo } from '@lynx-js/react'
 
 import { log, useMemoizedFn } from '@lynx-js/lynx-ui-common'
 import { ScrollView } from '@lynx-js/lynx-ui-scroll-view'
@@ -22,8 +22,8 @@ export function TabsBar<T>(props: TabsBarProps<T>) {
   } = props
 
   const {
-    tabSelectIndex,
     debugLog,
+    selectTabByIndex,
   } = useTabsRootContext()
 
   const tabKeys: string[] = useMemo(() => data.map(item => item.getTabKey()), [
@@ -33,10 +33,7 @@ export function TabsBar<T>(props: TabsBarProps<T>) {
   const selectTab = useMemoizedFn((tabsKey: string) => {
     const index = tabKeys.indexOf(tabsKey)
     log(debugLog, '[lynx-ui tabs] selectTab', tabsKey, index)
-    runOnMainThread(() => {
-      'main thread'
-      tabSelectIndex.current.set(index)
-    })()
+    selectTabByIndex(index)
   })
 
   const tabsContextValue = useMemo(() => ({

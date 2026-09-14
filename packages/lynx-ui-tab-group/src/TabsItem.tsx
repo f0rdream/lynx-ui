@@ -8,14 +8,12 @@ import {
   useMemo,
 } from '@lynx-js/react'
 
-import { mtsLog } from '@lynx-js/lynx-ui-common'
+import { getEventDetail } from '@lynx-js/lynx-ui-common'
 import { useMotionValueRefEvent } from '@lynx-js/motion/mini'
-import type { LayoutChangeDetailEvent, MainThread } from '@lynx-js/types'
+import type { LayoutChangeEvent, MainThread } from '@lynx-js/types'
 
 import { useTabsContext, useTabsRootContext } from './TabsContext'
 import type { TabItemProps } from './types'
-import { getIndicatorStyleProperties } from './utils/tabsIndicatorAnimation'
-import { calculateIndicatorPosition } from './utils/tabsIndicatorGeometry'
 
 let nextTabRegistrationId = 0
 
@@ -23,19 +21,14 @@ export const TabsItem = (props: TabItemProps) => {
   const { style, className, tabKey, children, ...viewProps } = props
   const { selectTab, tabKeyArray } = useTabsContext()
   const {
-    tabsWidthMapMT,
-    tabRegistrationMapMT,
-    indicatorOffsetMT,
-    indicatorElementMT,
-    hasRenderedIndicatorMT,
-    isFirstScreenSyncMT,
     onClickItem,
     selectTarget,
-    debugLog,
-    enableRTL,
     selectBehavior,
+    registerTabWidth,
+    unregisterTabWidth,
   } = useTabsRootContext()
   const MTSViewRef = useMainThreadRef<MainThread.Element>(null)
+  const isFirstScreenSyncMT = useMainThreadRef<boolean>(true)
   const tabRegistrationId = useMemo(() => nextTabRegistrationId++, [tabKey])
 
   const scrollToCenterMT = (smooth = true) => {
@@ -72,62 +65,23 @@ export const TabsItem = (props: TabItemProps) => {
     },
   )
 
-  const updateIndicatorPositionMT = () => {
-    'main thread'
-    const indicatorPosition = calculateIndicatorPosition(
-      indicatorOffsetMT.current.get(),
-      tabKeyArray,
-      tabsWidthMapMT.current.get(),
-    )
-    if (!indicatorPosition) {
-      return
-    }
-
-    indicatorElementMT.current?.setStyleProperties(
-      getIndicatorStyleProperties(
-        indicatorPosition.width,
-        indicatorPosition.left,
-        enableRTL,
-      ),
-    )
-    hasRenderedIndicatorMT.current = true
-  }
-  const registerTabWidthMT = (width: number) => {
-    'main thread'
-    mtsLog(debugLog, '[lynx-ui tabs] registerTabWidthMT', tabKey, width)
-    tabsWidthMapMT.current.set({
-      ...tabsWidthMapMT.current.get(),
-      [tabKey]: width,
-    })
-    tabRegistrationMapMT.current[tabKey] = tabRegistrationId
-    updateIndicatorPositionMT()
-  }
-  const unregisterTabWidthMT = (key: string, registrationId: number) => {
-    'main thread'
-    if (tabRegistrationMapMT.current[key] !== registrationId) {
-      return
-    }
-    mtsLog(debugLog, '[lynx-ui tabs] unregisterTabWidthMT', key)
-    const nextValue = { ...tabsWidthMapMT.current.get() }
-    delete nextValue[key]
-    tabsWidthMapMT.current.set(nextValue)
-    delete tabRegistrationMapMT.current[key]
-  }
-
-  const onLayoutChange = (e: LayoutChangeDetailEvent<MainThread.Element>) => {
-    'main thread'
-    // Android reports main-thread layout data through `params`, while iOS
-    // reports it through `detail`.
-    const width = e.detail?.width ?? e.params?.width
+  const onLayoutChange = (event: LayoutChangeEvent) => {
+    const { width } = getEventDetail(event)
     if (typeof width !== 'number') {
       return
     }
-    registerTabWidthMT(width)
+    registerTabWidth(tabKey, width, tabRegistrationId)
+  }
+
+  const clearFirstScreenSyncMT = () => {
+    'main thread'
+    isFirstScreenSyncMT.current = false
   }
 
   useEffect(() => {
+    runOnMainThread(clearFirstScreenSyncMT)()
     return () => {
-      runOnMainThread(unregisterTabWidthMT)(tabKey, tabRegistrationId)
+      unregisterTabWidth(tabKey, tabRegistrationId)
     }
   }, [tabKey, tabRegistrationId])
 
@@ -138,7 +92,7 @@ export const TabsItem = (props: TabItemProps) => {
       bindtap={onClick}
       className={className}
       style={style}
-      main-thread:bindlayoutchange={onLayoutChange}
+      bindlayoutchange={onLayoutChange}
     >
       {children}
     </view>

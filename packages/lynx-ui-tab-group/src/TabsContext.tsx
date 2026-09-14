@@ -5,7 +5,6 @@ import { createContext, useContext } from '@lynx-js/react'
 import type { MainThreadRef } from '@lynx-js/react'
 
 import type { MotionValue } from '@lynx-js/motion/mini'
-import type { MainThread } from '@lynx-js/types'
 
 import type { TabsIndicatorAnimation } from './types'
 
@@ -20,12 +19,15 @@ interface TabsRootContextValue {
 
   tabSelectIndex: MotionValueRef<number>
   tabsWidthMapMT: MotionValueRef<Record<string, number>>
-  tabRegistrationMapMT: MainThreadRef<Record<string, number>>
   indicatorOffsetMT: MotionValueRef<number>
-  indicatorElementMT: MainThreadRef<MainThread.Element | null>
-  hasRenderedIndicatorMT: MainThreadRef<boolean>
-  isFirstScreenSyncMT: MainThreadRef<boolean>
   selectTarget: MotionValueRef<{ index: number, smooth: boolean }>
+  selectTabByIndex: (index: number) => void
+  registerTabWidth: (
+    tabKey: string,
+    width: number,
+    registrationId: number,
+  ) => void
+  unregisterTabWidth: (tabKey: string, registrationId: number) => void
 
   onClickItem?: (index: number) => void
   onTabChanged?: (index: number) => void

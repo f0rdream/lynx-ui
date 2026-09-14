@@ -4,14 +4,12 @@
 import {
   forwardRef,
   runOnMainThread,
-  useEffect,
   useImperativeHandle,
   useMainThreadRef,
   useMemo,
 } from '@lynx-js/react'
 
 import { useMotionValueRef } from '@lynx-js/motion/mini'
-import type { MainThread } from '@lynx-js/types'
 
 import { TabsRootContext } from './TabsContext'
 import type { TabsRootProps, TabsRootRef } from './types'
@@ -21,9 +19,6 @@ function useDataSubscript(initValue: number) {
   const tabsWidthMapMT = useMotionValueRef<Record<string, number>>({})
   const tabRegistrationMapMT = useMainThreadRef<Record<string, number>>({})
   const indicatorOffsetMT = useMotionValueRef<number>(initValue)
-  const indicatorElementMT = useMainThreadRef<MainThread.Element>(null)
-  const hasRenderedIndicatorMT = useMainThreadRef<boolean>(false)
-  const isFirstScreenSyncMT = useMainThreadRef<boolean>(true)
   const selectTarget = useMotionValueRef<{ index: number, smooth: boolean }>({
     index: -1,
     smooth: false,
@@ -34,9 +29,6 @@ function useDataSubscript(initValue: number) {
     tabsWidthMapMT,
     tabRegistrationMapMT,
     indicatorOffsetMT,
-    indicatorElementMT,
-    hasRenderedIndicatorMT,
-    isFirstScreenSyncMT,
     selectTarget,
   }
 }
@@ -57,20 +49,50 @@ export const TabsRoot = forwardRef<TabsRootRef, TabsRootProps>((props, ref) => {
     tabsWidthMapMT,
     tabRegistrationMapMT,
     indicatorOffsetMT,
-    indicatorElementMT,
-    hasRenderedIndicatorMT,
-    isFirstScreenSyncMT,
     selectTarget,
   } = useDataSubscript(initialSelectIndex)
 
-  const clearFirstScreenSyncMT = () => {
+  const selectTabByIndexMT = (index: number) => {
     'main thread'
-    isFirstScreenSyncMT.current = false
+    tabSelectIndex.current.set(index)
+  }
+  const selectTabByIndex = (index: number) => {
+    runOnMainThread(selectTabByIndexMT)(index)
   }
 
-  useEffect(() => {
-    runOnMainThread(clearFirstScreenSyncMT)()
-  }, [])
+  const registerTabWidthMT = (
+    tabKey: string,
+    width: number,
+    registrationId: number,
+  ) => {
+    'main thread'
+    tabsWidthMapMT.current.set({
+      ...tabsWidthMapMT.current.get(),
+      [tabKey]: width,
+    })
+    tabRegistrationMapMT.current[tabKey] = registrationId
+  }
+  const registerTabWidth = (
+    tabKey: string,
+    width: number,
+    registrationId: number,
+  ) => {
+    runOnMainThread(registerTabWidthMT)(tabKey, width, registrationId)
+  }
+
+  const unregisterTabWidthMT = (tabKey: string, registrationId: number) => {
+    'main thread'
+    if (tabRegistrationMapMT.current[tabKey] !== registrationId) {
+      return
+    }
+    const nextValue = { ...tabsWidthMapMT.current.get() }
+    delete nextValue[tabKey]
+    tabsWidthMapMT.current.set(nextValue)
+    delete tabRegistrationMapMT.current[tabKey]
+  }
+  const unregisterTabWidth = (tabKey: string, registrationId: number) => {
+    runOnMainThread(unregisterTabWidthMT)(tabKey, registrationId)
+  }
 
   const tabsRootContextValue = useMemo(
     () => ({
@@ -81,11 +103,10 @@ export const TabsRoot = forwardRef<TabsRootRef, TabsRootProps>((props, ref) => {
       initialSelectIndex,
       tabSelectIndex,
       tabsWidthMapMT,
-      tabRegistrationMapMT,
       indicatorOffsetMT,
-      indicatorElementMT,
-      hasRenderedIndicatorMT,
-      isFirstScreenSyncMT,
+      selectTabByIndex,
+      registerTabWidth,
+      unregisterTabWidth,
       onTabChanged,
       onClickItem,
       selectTarget,
@@ -100,11 +121,10 @@ export const TabsRoot = forwardRef<TabsRootRef, TabsRootProps>((props, ref) => {
       onTabChanged,
       tabSelectIndex,
       tabsWidthMapMT,
-      tabRegistrationMapMT,
       indicatorOffsetMT,
-      indicatorElementMT,
-      hasRenderedIndicatorMT,
-      isFirstScreenSyncMT,
+      selectTabByIndex,
+      registerTabWidth,
+      unregisterTabWidth,
       selectTarget,
     ],
   )
