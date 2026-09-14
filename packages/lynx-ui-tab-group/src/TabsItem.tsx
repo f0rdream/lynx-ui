@@ -8,9 +8,8 @@ import {
   useMemo,
 } from '@lynx-js/react'
 
-import { getEventDetail } from '@lynx-js/lynx-ui-common'
 import { useMotionValueRefEvent } from '@lynx-js/motion/mini'
-import type { LayoutChangeEvent, MainThread } from '@lynx-js/types'
+import type { LayoutChangeDetailEvent, MainThread } from '@lynx-js/types'
 
 import { useTabsContext, useTabsRootContext } from './TabsContext'
 import type { TabItemProps } from './types'
@@ -21,10 +20,11 @@ export const TabsItem = (props: TabItemProps) => {
   const { style, className, tabKey, children, ...viewProps } = props
   const { selectTab, tabKeyArray } = useTabsContext()
   const {
+    tabsWidthMapMT,
+    tabRegistrationMapMT,
     onClickItem,
     selectTarget,
     selectBehavior,
-    registerTabWidth,
     unregisterTabWidth,
   } = useTabsRootContext()
   const MTSViewRef = useMainThreadRef<MainThread.Element>(null)
@@ -65,12 +65,19 @@ export const TabsItem = (props: TabItemProps) => {
     },
   )
 
-  const onLayoutChange = (event: LayoutChangeEvent) => {
-    const { width } = getEventDetail(event)
+  const onLayoutChange = (
+    event: LayoutChangeDetailEvent<MainThread.Element>,
+  ) => {
+    'main thread'
+    const width = event.detail?.width ?? event.params?.width
     if (typeof width !== 'number') {
       return
     }
-    registerTabWidth(tabKey, width, tabRegistrationId)
+    tabsWidthMapMT.current.set({
+      ...tabsWidthMapMT.current.get(),
+      [tabKey]: width,
+    })
+    tabRegistrationMapMT.current[tabKey] = tabRegistrationId
   }
 
   const clearFirstScreenSyncMT = () => {
@@ -92,7 +99,7 @@ export const TabsItem = (props: TabItemProps) => {
       bindtap={onClick}
       className={className}
       style={style}
-      bindlayoutchange={onLayoutChange}
+      main-thread:bindlayoutchange={onLayoutChange}
     >
       {children}
     </view>

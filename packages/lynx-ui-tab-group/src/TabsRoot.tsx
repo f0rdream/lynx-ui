@@ -60,26 +60,6 @@ export const TabsRoot = forwardRef<TabsRootRef, TabsRootProps>((props, ref) => {
     runOnMainThread(selectTabByIndexMT)(index)
   }
 
-  const registerTabWidthMT = (
-    tabKey: string,
-    width: number,
-    registrationId: number,
-  ) => {
-    'main thread'
-    tabsWidthMapMT.current.set({
-      ...tabsWidthMapMT.current.get(),
-      [tabKey]: width,
-    })
-    tabRegistrationMapMT.current[tabKey] = registrationId
-  }
-  const registerTabWidth = (
-    tabKey: string,
-    width: number,
-    registrationId: number,
-  ) => {
-    runOnMainThread(registerTabWidthMT)(tabKey, width, registrationId)
-  }
-
   const unregisterTabWidthMT = (tabKey: string, registrationId: number) => {
     'main thread'
     if (tabRegistrationMapMT.current[tabKey] !== registrationId) {
@@ -103,9 +83,9 @@ export const TabsRoot = forwardRef<TabsRootRef, TabsRootProps>((props, ref) => {
       initialSelectIndex,
       tabSelectIndex,
       tabsWidthMapMT,
+      tabRegistrationMapMT,
       indicatorOffsetMT,
       selectTabByIndex,
-      registerTabWidth,
       unregisterTabWidth,
       onTabChanged,
       onClickItem,
@@ -121,9 +101,9 @@ export const TabsRoot = forwardRef<TabsRootRef, TabsRootProps>((props, ref) => {
       onTabChanged,
       tabSelectIndex,
       tabsWidthMapMT,
+      tabRegistrationMapMT,
       indicatorOffsetMT,
       selectTabByIndex,
-      registerTabWidth,
       unregisterTabWidth,
       selectTarget,
     ],

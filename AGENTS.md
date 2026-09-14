@@ -244,10 +244,12 @@ Main Thread Script allows executing JavaScript on the main thread. It is often u
   - Use `runOnMainThread` to invoke MTS functions from the background thread.
   - Use `runOnBackground` to call background functions from MTS.
   - Do not mutate a `MainThreadRef` or motion value captured through React context
-    from a descendant worklet when another component must observe the change.
-    Expose a background-thread command from the component that owns the state,
-    and let an owner-defined worklet perform the main-thread mutation. Keep
-    element refs and main-thread flags local when only one component uses them.
+    from a nested descendant worklet when another component must observe the
+    change. For a main-thread event hot path, perform the mutation directly in
+    the registered event worklet; otherwise, expose a background-thread command
+    from the component that owns the state and let an owner-defined worklet
+    perform the main-thread mutation. Keep element refs and main-thread flags
+    local when only one component uses them.
 
   ```typescript
   // Example: Handling a tap on the main thread

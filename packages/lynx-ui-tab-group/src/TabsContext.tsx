@@ -19,14 +19,10 @@ interface TabsRootContextValue {
 
   tabSelectIndex: MotionValueRef<number>
   tabsWidthMapMT: MotionValueRef<Record<string, number>>
+  tabRegistrationMapMT: MainThreadRef<Record<string, number>>
   indicatorOffsetMT: MotionValueRef<number>
   selectTarget: MotionValueRef<{ index: number, smooth: boolean }>
   selectTabByIndex: (index: number) => void
-  registerTabWidth: (
-    tabKey: string,
-    width: number,
-    registrationId: number,
-  ) => void
   unregisterTabWidth: (tabKey: string, registrationId: number) => void
 
   onClickItem?: (index: number) => void
