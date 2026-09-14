@@ -10,6 +10,8 @@ import { clsx } from 'clsx'
 import { TabsContext, useTabsRootContext } from './TabsContext'
 import type { TabsBarProps } from './types'
 
+import './index.css'
+
 export function TabsBar<T>(props: TabsBarProps<T>) {
   const {
     data,
@@ -57,11 +59,6 @@ export function TabsBar<T>(props: TabsBarProps<T>) {
       >
         <view
           className={clsx('lynx-ui-tab-group__items', tabsItemWrapperClass)}
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            zIndex: 0,
-          }}
         >
           {children}
           {renderedChildren}

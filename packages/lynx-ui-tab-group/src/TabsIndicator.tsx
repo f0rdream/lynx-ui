@@ -22,6 +22,8 @@ import {
 } from './utils/tabsIndicatorAnimation'
 import { calculateIndicatorPosition } from './utils/tabsIndicatorGeometry'
 
+import './index.css'
+
 export const TabsIndicator = (props: TabsIndicatorProps) => {
   const { style, className, indicatorProps, children } = props
   const {
@@ -30,15 +32,6 @@ export const TabsIndicator = (props: TabsIndicatorProps) => {
     ...indicatorPropsWithoutStyle
   } = indicatorProps ?? {}
   const customStyle = indicatorPropsStyle ?? style
-  const structuralStyle = typeof customStyle === 'string'
-    ? `bottom:0px;left:0px;position:absolute;width:0px;${customStyle}`
-    : {
-      bottom: '0px',
-      left: '0px',
-      position: 'absolute' as const,
-      width: '0px',
-      ...customStyle,
-    }
   const { tabKeyArray } = useTabsContext()
   const {
     tabSelectIndex,
@@ -180,7 +173,7 @@ export const TabsIndicator = (props: TabsIndicatorProps) => {
     <view
       {...indicatorPropsWithoutStyle}
       main-thread:ref={indicatorElementMT}
-      style={structuralStyle}
+      style={customStyle}
       className={clsx(
         'lynx-ui-tab-group__indicator',
         indicatorPropsClassName,
