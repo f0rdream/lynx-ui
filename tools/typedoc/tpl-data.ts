@@ -37,6 +37,21 @@ interface ExternalTypeContext {
 
 const externalTypeContextCache = new Map<string, ExternalTypeContext | null>()
 
+export function renderArrayType(
+  elementType: any,
+  isZhContext: boolean,
+  currentPkgName?: string,
+): string {
+  const renderedElement = doTypeCalc(
+    elementType,
+    isZhContext,
+    currentPkgName,
+  )
+  const needsParentheses = elementType.type === 'union'
+    || elementType.type === 'intersection'
+  return `${needsParentheses ? `(${renderedElement})` : renderedElement}[]`
+}
+
 function buildIdMap(root: unknown): Map<number, any> {
   const map = new Map<number, any>()
   const visit = (node: any) => {
@@ -288,7 +303,7 @@ const doSingleTypeCalc = (
         }`
       }
       case 'array':
-        return `${doTypeCalc(t.elementType, isZhContext, currentPkgName)}[]`
+        return renderArrayType(t.elementType, isZhContext, currentPkgName)
       case 'literal':
         return t.value
       case 'templateLiteral':
@@ -389,7 +404,7 @@ const doTypeCalc = (
         }`
       }
       case 'array':
-        return `${doTypeCalc(t.elementType, isZhContext, currentPkgName)}[]`
+        return renderArrayType(t.elementType, isZhContext, currentPkgName)
       case 'tuple':
         return `[${
           t.elements.map((element: any) =>

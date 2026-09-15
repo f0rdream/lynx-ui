@@ -3,6 +3,7 @@
 // LICENSE file in the root directory of this source tree.
 import {
   forwardRef,
+  runOnBackground,
   runOnMainThread,
   useImperativeHandle,
   useMainThreadRef,
@@ -15,17 +16,15 @@ import { TabsRootContext } from './TabsContext'
 import type { TabsRootProps, TabsRootRef } from './types'
 
 function useDataSubscript(initValue: number) {
-  const tabSelectIndex = useMotionValueRef<number>(initValue)
   const tabsWidthMapMT = useMotionValueRef<Record<string, number>>({})
   const tabRegistrationMapMT = useMainThreadRef<Record<string, number>>({})
   const indicatorOffsetMT = useMotionValueRef<number>(initValue)
   const selectTarget = useMotionValueRef<{ index: number, smooth: boolean }>({
-    index: -1,
+    index: initValue,
     smooth: false,
   })
 
   return {
-    tabSelectIndex,
     tabsWidthMapMT,
     tabRegistrationMapMT,
     indicatorOffsetMT,
@@ -45,19 +44,28 @@ export const TabsRoot = forwardRef<TabsRootRef, TabsRootProps>((props, ref) => {
     enableRTL = false,
   } = props
   const {
-    tabSelectIndex,
     tabsWidthMapMT,
     tabRegistrationMapMT,
     indicatorOffsetMT,
     selectTarget,
   } = useDataSubscript(initialSelectIndex)
 
-  const selectTabByIndexMT = (index: number) => {
+  const onTabChangedJS = (index: number) => {
+    onTabChanged?.(index)
+  }
+  const selectTabMT = (target: { index: number, smooth: boolean }) => {
     'main thread'
-    tabSelectIndex.current.set(index)
+    if (selectTarget.current.get().index === target.index) {
+      return
+    }
+    selectTarget.current.set(target)
+    runOnBackground(onTabChangedJS)(target.index)
   }
   const selectTabByIndex = (index: number) => {
-    runOnMainThread(selectTabByIndexMT)(index)
+    runOnMainThread(selectTabMT)({
+      index,
+      smooth: selectBehavior !== 'instant',
+    })
   }
 
   const unregisterTabWidthMT = (tabKey: string, registrationId: number) => {
@@ -81,13 +89,11 @@ export const TabsRoot = forwardRef<TabsRootRef, TabsRootProps>((props, ref) => {
       selectBehavior,
       indicatorAnimation,
       initialSelectIndex,
-      tabSelectIndex,
       tabsWidthMapMT,
       tabRegistrationMapMT,
       indicatorOffsetMT,
       selectTabByIndex,
       unregisterTabWidth,
-      onTabChanged,
       onClickItem,
       selectTarget,
     }),
@@ -98,8 +104,6 @@ export const TabsRoot = forwardRef<TabsRootRef, TabsRootProps>((props, ref) => {
       indicatorAnimation,
       initialSelectIndex,
       onClickItem,
-      onTabChanged,
-      tabSelectIndex,
       tabsWidthMapMT,
       tabRegistrationMapMT,
       indicatorOffsetMT,
@@ -108,12 +112,6 @@ export const TabsRoot = forwardRef<TabsRootRef, TabsRootProps>((props, ref) => {
       selectTarget,
     ],
   )
-
-  const selectTabMT = (target: { index: number, smooth: boolean }) => {
-    'main thread'
-    selectTarget.current.set(target)
-    tabSelectIndex.current.set(target.index)
-  }
 
   useImperativeHandle(ref, () => ({
     selectTab: (index: number, smooth: boolean) => {

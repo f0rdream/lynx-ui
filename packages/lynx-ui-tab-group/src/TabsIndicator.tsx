@@ -2,12 +2,7 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import {
-  runOnBackground,
-  runOnMainThread,
-  useEffect,
-  useMainThreadRef,
-} from '@lynx-js/react'
+import { runOnMainThread, useEffect, useMainThreadRef } from '@lynx-js/react'
 
 import { mtsLog } from '@lynx-js/lynx-ui-common'
 import { animate, useMotionValueRefEvent } from '@lynx-js/motion/mini'
@@ -18,7 +13,6 @@ import { useTabsContext, useTabsRootContext } from './TabsContext'
 import type { TabsIndicatorProps } from './types'
 import {
   getIndicatorStyleProperties,
-  shouldAnimateIndicator,
   toMiniAnimationOptions,
 } from './utils/tabsIndicatorAnimation'
 import { calculateIndicatorPosition } from './utils/tabsIndicatorGeometry'
@@ -35,13 +29,10 @@ export const TabsIndicator = (props: TabsIndicatorProps) => {
   const customStyle = indicatorPropsStyle ?? style
   const { tabKeyArray } = useTabsContext()
   const {
-    tabSelectIndex,
     tabsWidthMapMT,
     indicatorOffsetMT,
-    selectBehavior,
     indicatorAnimation,
     selectTarget,
-    onTabChanged,
     debugLog,
     enableRTL,
   } = useTabsRootContext()
@@ -49,7 +40,6 @@ export const TabsIndicator = (props: TabsIndicatorProps) => {
   const offsetMotionRef = indicatorOffsetMT
   const indicatorElementMT = useMainThreadRef<MainThread.Element | null>(null)
   const hasRenderedIndicatorMT = useMainThreadRef<boolean>(false)
-  const tabChangeHandledBySelectTargetMT = useMainThreadRef<number>(-1)
 
   const updateIndicator = (params: { width: number, left: number }) => {
     'main thread'
@@ -120,9 +110,6 @@ export const TabsIndicator = (props: TabsIndicatorProps) => {
     updateIndicatorAtOffset(offsetMotionRef.current.get())
   })
 
-  const onTabChangedJS = (index: number) => {
-    onTabChanged?.(index)
-  }
   useMotionValueRefEvent(
     selectTarget,
     'change',
@@ -137,31 +124,8 @@ export const TabsIndicator = (props: TabsIndicatorProps) => {
       } else {
         syncIndicatorOffset(index)
       }
-      runOnBackground(onTabChangedJS)(index)
-      tabChangeHandledBySelectTargetMT.current = index
     },
   )
-
-  useMotionValueRefEvent(tabSelectIndex, 'change', (index) => {
-    'main thread'
-    mtsLog(debugLog, '[lynx-ui tabs] tabSelectIndex', index, tabKeyArray.length)
-    if (index < 0 || index > tabKeyArray.length - 1) {
-      return
-    }
-    if (
-      hasRenderedIndicatorMT.current
-      && shouldAnimateIndicator(selectBehavior)
-    ) {
-      animateToTab(index)
-    } else {
-      syncIndicatorOffset(index)
-    }
-    if (tabChangeHandledBySelectTargetMT.current === index) {
-      tabChangeHandledBySelectTargetMT.current = -1
-    } else {
-      runOnBackground(onTabChangedJS)(index)
-    }
-  })
 
   useEffect(() => {
     runOnMainThread(() => {

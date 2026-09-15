@@ -191,7 +191,12 @@ export interface TabsBarProps<T>
   renderTabItem?: (tabItem: TabsData<T>) => ReactNode
 }
 
-export interface TabItemProps extends StandardProps {
+export interface TabItemProps extends
+  Omit<
+    StandardProps,
+    'bindtap' | 'main-thread:bindlayoutchange' | 'main-thread:ref'
+  >
+{
   /**
    * The unique key of the tab item.
    * @zh Tab 项的唯一键。

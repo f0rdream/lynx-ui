@@ -23,12 +23,13 @@ export const TabsItem = (props: TabItemProps) => {
     tabsWidthMapMT,
     tabRegistrationMapMT,
     onClickItem,
+    initialSelectIndex,
     selectTarget,
     selectBehavior,
     unregisterTabWidth,
   } = useTabsRootContext()
   const MTSViewRef = useMainThreadRef<MainThread.Element>(null)
-  const isFirstScreenSyncMT = useMainThreadRef<boolean>(true)
+  const hasAlignedInitialSelectionMT = useMainThreadRef<boolean>(false)
   const tabRegistrationId = useMemo(() => nextTabRegistrationId++, [tabKey])
 
   const scrollToCenterMT = (smooth = true) => {
@@ -40,12 +41,6 @@ export const TabsItem = (props: TabItemProps) => {
         ...(smooth ? { behavior: 'smooth' } : {}),
       },
     })
-  }
-
-  const scrollToCenterAfterInitialAlignmentMT = (smooth: boolean) => {
-    'main thread'
-    const shouldSmooth = !isFirstScreenSyncMT.current && smooth
-    scrollToCenterMT(shouldSmooth)
   }
 
   const onClick = () => {
@@ -60,7 +55,7 @@ export const TabsItem = (props: TabItemProps) => {
     (target: { index: number, smooth: boolean }) => {
       'main thread'
       if (tabKey === tabKeyArray[target.index]) {
-        scrollToCenterAfterInitialAlignmentMT(target.smooth)
+        scrollToCenterMT(target.smooth)
       }
     },
   )
@@ -78,15 +73,21 @@ export const TabsItem = (props: TabItemProps) => {
       [tabKey]: width,
     })
     tabRegistrationMapMT.current[tabKey] = tabRegistrationId
-  }
-
-  const clearFirstScreenSyncMT = () => {
-    'main thread'
-    isFirstScreenSyncMT.current = false
+    if (
+      !hasAlignedInitialSelectionMT.current
+      && tabKey === tabKeyArray[initialSelectIndex]
+    ) {
+      MTSViewRef.current?.invoke('scrollIntoView', {
+        scrollIntoViewOptions: {
+          block: 'center',
+          inline: 'center',
+        },
+      })
+      hasAlignedInitialSelectionMT.current = true
+    }
   }
 
   useEffect(() => {
-    runOnMainThread(clearFirstScreenSyncMT)()
     return () => {
       unregisterTabWidth(tabKey, tabRegistrationId)
     }

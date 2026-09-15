@@ -1,10 +1,13 @@
 import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
 
+<!-- cspell:disable -->
 
-  
+
+
 ## ScrollViewProps
-    
-  
+
+
+
 ### Properties
 <UIApiTable source={[
   {
@@ -53,7 +56,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "bounceableOptions",
-    "type": "boolean | {alwaysBouncing?: boolean, debugLog?: boolean, enableBounceEventInFling?: boolean, enableBounces: boolean, endBounceTriggerDistance?: number, estimatedHeight?: number, estimatedWidth?: number, lowerBounceItem?: any, onScrollToBounces?: (e: {direction: upper | lower}) => void, singleSidedBounce?: upper | lower | both | iOSBounces | none, startBounceTriggerDistance?: number, upperBounceItem?: any, validAnimationVersion?: boolean}",
+    "type": "boolean | BounceableBasicProps",
     "summary": [
       {
         "kind": "text",
@@ -318,6 +321,50 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "docTypeFallback": null
   },
   {
+    "name": "experimentalNestedScrollBackward",
+    "type": "selfOnly | selfFirst | parentFirst | parallel",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Adapts Harmony nested scroll behavior. 'selfOnly' scrolls only this component. 'selfFirst' scrolls this component first, then the parent after this component reaches a scroll boundary. 'parentFirst' scrolls the parent first, then this component after the parent reaches a scroll boundary. 'parallel' scrolls this component and the parent at the same time."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "适配 Harmony 的嵌套滚动行为。'selfOnly' 表示只自身滚动，不与父组件联动。'selfFirst' 表示自身先滚动，自身滚动到边界以后父组件滚动。'parentFirst' 表示父组件先滚动，父组件滚动到边界以后自身滚动。'parallel' 表示自身和父组件同时滚动。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "experimentalNestedScrollForward",
+    "type": "selfOnly | selfFirst | parentFirst | parallel",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Adapts Harmony nested scroll behavior. 'selfOnly' scrolls only this component. 'selfFirst' scrolls this component first, then the parent after this component reaches a scroll boundary. 'parentFirst' scrolls the parent first, then this component after the parent reaches a scroll boundary. 'parallel' scrolls this component and the parent at the same time."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "适配 Harmony 的嵌套滚动行为。'selfOnly' 表示只自身滚动，不与父组件联动。'selfFirst' 表示自身先滚动，自身滚动到边界以后父组件滚动。'parentFirst' 表示父组件先滚动，父组件滚动到边界以后自身滚动。'parallel' 表示自身和父组件同时滚动。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
     "name": "exposureBottom",
     "type": "string",
     "summary": [
@@ -561,7 +608,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "main-thread:gesture",
-    "type": "BaseGesture",
+    "type": "BaseGesture<BaseGestureConfig, GestureChangeEvent>",
     "summary": [
       {
         "kind": "text",
@@ -785,7 +832,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "sticky",
-    "type": "ReactElement",
+    "type": "ReactElement<any, string | JSXElementConstructor<any>>",
     "summary": [
       {
         "kind": "text",
@@ -937,7 +984,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
 <UIApiTable source={[
   {
     "name": "catchLongPress",
-    "type": "(e: EventHandler | undefined) => void",
+    "type": "(e: EventHandler<BaseTouchEvent<Target>> | undefined) => void",
     "summary": [
       {
         "kind": "text",
@@ -959,7 +1006,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "catchTouchCancel",
-    "type": "(e: EventHandler | undefined) => void",
+    "type": "(e: TouchEvent) => void",
     "summary": [
       {
         "kind": "text",
@@ -981,7 +1028,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "catchTouchEnd",
-    "type": "(e: EventHandler | undefined) => void",
+    "type": "(e: TouchEvent) => void",
     "summary": [
       {
         "kind": "text",
@@ -1003,7 +1050,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "catchTouchMove",
-    "type": "(e: EventHandler | undefined) => void",
+    "type": "(e: TouchEvent) => void",
     "summary": [
       {
         "kind": "text",
@@ -1025,7 +1072,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "catchTouchStart",
-    "type": "(e: EventHandler | undefined) => void",
+    "type": "(e: TouchEvent) => void",
     "summary": [
       {
         "kind": "text",
@@ -1069,7 +1116,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "onLayoutChange",
-    "type": "(e: EventHandler | undefined) => void",
+    "type": "(e: EventHandler<LayoutChangeDetailEvent<Target>> | undefined) => void",
     "summary": [
       {
         "kind": "text",
@@ -1091,7 +1138,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "onLongPress",
-    "type": "(e: EventHandler | undefined) => void",
+    "type": "(e: EventHandler<BaseTouchEvent<Target>> | undefined) => void",
     "summary": [
       {
         "kind": "text",
@@ -1135,7 +1182,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "onScrollEnd",
-    "type": "(e: [object Object] | undefined) => void",
+    "type": "(e: ScrollEndEvent) => void",
     "summary": [
       {
         "kind": "text",
@@ -1157,7 +1204,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "onScrollToLower",
-    "type": "(e: [object Object] | undefined) => void",
+    "type": "(e: ScrollToLowerEvent) => void",
     "summary": [
       {
         "kind": "text",
@@ -1179,7 +1226,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "onScrollToUpper",
-    "type": "(e: [object Object] | undefined) => void",
+    "type": "(e: ScrollToUpperEvent) => void",
     "summary": [
       {
         "kind": "text",
@@ -1201,7 +1248,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "onTap",
-    "type": "(e: EventHandler | undefined) => void",
+    "type": "(e: EventHandler<BaseTouchEvent<Target>> | undefined) => void",
     "summary": [
       {
         "kind": "text",
@@ -1223,7 +1270,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "onTouchCancel",
-    "type": "(e: EventHandler | undefined) => void",
+    "type": "(e: TouchEvent) => void",
     "summary": [
       {
         "kind": "text",
@@ -1245,7 +1292,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "onTouchEnd",
-    "type": "(e: EventHandler | undefined) => void",
+    "type": "(e: TouchEvent) => void",
     "summary": [
       {
         "kind": "text",
@@ -1267,7 +1314,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "onTouchMove",
-    "type": "(e: EventHandler | undefined) => void",
+    "type": "(e: TouchEvent) => void",
     "summary": [
       {
         "kind": "text",
@@ -1289,7 +1336,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "onTouchStart",
-    "type": "(e: EventHandler | undefined) => void",
+    "type": "(e: TouchEvent) => void",
     "summary": [
       {
         "kind": "text",
@@ -1308,8 +1355,31 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "isSupportAndroid": true,
     "isSupportHarmony": true,
     "docTypeFallback": null
+  },
+  {
+    "name": "onWheel",
+    "type": "(e: CommonEvent) => void",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Send when a wheel event is triggered on the scroll-view."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "当 scroll-view 触发滚轮事件时发送。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
   }
 ]}/>
+
 
 ### BounceableBasicProps
 
@@ -1331,28 +1401,6 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
       }
     ],
     "defaultValue": "true",
-    "isOption": true,
-    "isSupportIOS": true,
-    "isSupportAndroid": true,
-    "isSupportHarmony": true,
-    "docTypeFallback": null
-  },
-  {
-    "name": "debugLog",
-    "type": "boolean",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Display debug logs. Open it when you find a bug."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "显示调试日志。当您发现错误时，请打开此选项。"
-      }
-    ],
-    "defaultValue": "false",
     "isOption": true,
     "isSupportIOS": true,
     "isSupportAndroid": true,
@@ -1616,12 +1664,12 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "docTypeFallback": null
   }
 ]}/>
-    
+
 
 <UIApiTable source={[
   {
     "name": "onScrollToBounces",
-    "type": "(e: {direction: upper | lower}) => void",
+    "type": "(e: scrollToBouncesInfo) => void",
     "summary": [
       {
         "kind": "text",
@@ -1666,8 +1714,8 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
     "docTypeFallback": null
   }
 ]}/>
-    
-      
+
+
 
 ### scrollToBouncesInfo
 

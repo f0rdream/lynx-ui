@@ -15,9 +15,8 @@ interface TabsRootContextValue {
   enableRTL: boolean
   selectBehavior?: 'smooth' | 'instant'
   indicatorAnimation?: TabsIndicatorAnimation
-  initialSelectIndex?: number
+  initialSelectIndex: number
 
-  tabSelectIndex: MotionValueRef<number>
   tabsWidthMapMT: MotionValueRef<Record<string, number>>
   tabRegistrationMapMT: MainThreadRef<Record<string, number>>
   indicatorOffsetMT: MotionValueRef<number>
@@ -26,7 +25,6 @@ interface TabsRootContextValue {
   unregisterTabWidth: (tabKey: string, registrationId: number) => void
 
   onClickItem?: (index: number) => void
-  onTabChanged?: (index: number) => void
 }
 
 export const TabsRootContext = createContext<TabsRootContextValue | null>(null)
