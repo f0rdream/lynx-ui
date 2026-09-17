@@ -2,5 +2,6 @@
   "packages/**/vitest.config.ts",
   "luna/packages/**/vitest.config.ts",
   "apps/examples/vitest.config.ts",
+  "tools/typedoc/vitest.config.ts",
   "tools/skill-lynx-ui/vitest.config.ts"
 ]

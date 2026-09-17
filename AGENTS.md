@@ -161,6 +161,7 @@ This library follows the **Headless** pattern, focusing on logic, state manageme
 ### General
 
 - **TypeScript**: Use strict typing. Avoid `any`.
+- **Side Effects**: Component packages must declare `"sideEffects": false` in `package.json`, including packages that import component styles. Do not add CSS glob allowlists to `sideEffects`.
 - **Comments**: All code comments **MUST** be written in English.
 - **Functional Components**: Use React Functional Components with Hooks.
 - **Controlled & Uncontrolled Modes**: We encourage all interactive components to support both **controlled** and **uncontrolled** modes. This provides flexibility for users who want to manage state externally (controlled) or let the component manage its own internal state (uncontrolled). Typically, you should provide a `value` (or `show`, etc.) prop for the controlled mode, and a `defaultValue` (or `defaultShow`, etc.) prop for the uncontrolled mode.
@@ -242,6 +243,13 @@ Main Thread Script allows executing JavaScript on the main thread. It is often u
   - Use `main-thread:` prefix for event handlers (e.g., `main-thread:bindtap`).
   - Use `runOnMainThread` to invoke MTS functions from the background thread.
   - Use `runOnBackground` to call background functions from MTS.
+  - Do not mutate a `MainThreadRef` or motion value captured through React context
+    from a nested descendant worklet when another component must observe the
+    change. For a main-thread event hot path, perform the mutation directly in
+    the registered event worklet; otherwise, expose a background-thread command
+    from the component that owns the state and let an owner-defined worklet
+    perform the main-thread mutation. Keep element refs and main-thread flags
+    local when only one component uses them.
 
   ```typescript
   // Example: Handling a tap on the main thread
