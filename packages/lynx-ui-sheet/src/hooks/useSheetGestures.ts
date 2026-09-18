@@ -28,7 +28,6 @@ import {
   clamp,
   findNearestSnap,
   getDefaultRubberBand,
-  getMainAxisTouchCoordinate,
   getNextMainAxisOffset,
   resolveSheetSide,
   rubberEffect,
@@ -62,6 +61,14 @@ interface UseSheetPanGestureOptions {
   onDragEndCloseMT: (
     opts?: { animationConfig?: SnappingOptions['animationConfig'] },
   ) => void
+}
+
+function getMainAxisGestureCoordinate(
+  side: 'top' | 'bottom' | 'left' | 'right',
+  params: { pageX: number, pageY: number },
+) {
+  'main thread'
+  return side === 'left' || side === 'right' ? params.pageX : params.pageY
 }
 
 function resolveHandoffPosition(
@@ -113,7 +120,7 @@ export function useSheetPanGesture({
     .updateConfig('failOffsetY', gestureConfig?.failOffsetY)
     .onBegin(event => {
       'main thread'
-      lastCoordinateMTRef.current = getMainAxisTouchCoordinate(
+      lastCoordinateMTRef.current = getMainAxisGestureCoordinate(
         resolvedSide,
         event.params,
       )
@@ -123,7 +130,10 @@ export function useSheetPanGesture({
     .onUpdate((event: PanGestureChangeEvent, manager: StateManager) => {
       'main thread'
       if (yieldedToContentMTRef.current) return
-      const coordinate = getMainAxisTouchCoordinate(resolvedSide, event.params)
+      const coordinate = getMainAxisGestureCoordinate(
+        resolvedSide,
+        event.params,
+      )
       const rawDelta = coordinate - lastCoordinateMTRef.current
       lastCoordinateMTRef.current = coordinate
       const current = yRef.current.get()
@@ -316,7 +326,7 @@ export function useSheetScrollGesture(
       const params = event.params as NativeScrollParams
       const boundary = getScrollBoundary?.(event)
         ?? getDefaultScrollBoundary(resolvedSide, params)
-      lastCoordinateMTRef.current = getMainAxisTouchCoordinate(
+      lastCoordinateMTRef.current = getMainAxisGestureCoordinate(
         resolvedSide,
         params,
       )
@@ -342,7 +352,7 @@ export function useSheetScrollGesture(
         ?? getDefaultScrollBoundary(resolvedSide, params)
       state.atStart = boundary.atStart
       state.atEnd = boundary.atEnd
-      const coordinate = getMainAxisTouchCoordinate(resolvedSide, params)
+      const coordinate = getMainAxisGestureCoordinate(resolvedSide, params)
       const rawDelta = coordinate - lastCoordinateMTRef.current
       lastCoordinateMTRef.current = coordinate
       const sheetDelta = getNextMainAxisOffset(resolvedSide, 0, rawDelta)
