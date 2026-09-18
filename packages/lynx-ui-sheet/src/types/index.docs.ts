@@ -4,7 +4,11 @@
 
 import type { ReactNode } from '@lynx-js/react'
 
-import type { GestureKind, PanGestureConfig } from '@lynx-js/gesture-runtime'
+import type {
+  GestureKind,
+  NativeGestureChangeEvent,
+  PanGestureConfig,
+} from '@lynx-js/gesture-runtime'
 import type { ComponentBasicProps } from '@lynx-js/lynx-ui-common'
 import type { OverlayViewProps } from '@lynx-js/lynx-ui-overlay'
 
@@ -135,10 +139,11 @@ export interface SheetContentProps extends ComponentBasicProps {
   children?: ReactNode
 }
 
-/** Determines which surface owns a drag that starts in nested scroll content. */
+/** Determines the order in which nested content and the Sheet consume a drag. */
 export type SheetNestedScrollBehavior =
   | 'sheet-first'
   | 'content-first'
+  | 'content-only'
   | 'disabled'
 
 export type SheetGestureConfig = Pick<
@@ -157,28 +162,61 @@ export interface SheetGestureRelations {
   continueWith?: GestureKind[]
 }
 
+/** Unknown boundaries must be omitted, not reported as the start of content. */
+export interface SheetScrollBoundary {
+  atStart?: boolean
+  atEnd?: boolean
+}
+
+export interface SheetGestureDecision extends SheetScrollBoundary {
+  /** Positive expands the Sheet; negative collapses it, independent of side. */
+  delta: number
+  /** Visible Sheet size in pixels. */
+  position: number
+  handoffPosition: number
+  defaultOwner: 'sheet' | 'content'
+}
+
 export interface UseSheetScrollGestureOptions {
   /**
-   * `sheet-first` expands the Sheet before scrolling its content.
-   * `content-first` scrolls content first and expands only at its end.
-   * `disabled` leaves the gesture entirely to the scroll container.
+   * `sheet-first` expands before scrolling; `content-first` expands at the
+   * content end. `content-only` never drags the Sheet from this binding.
+   * `disabled` is a deprecated alias for `content-only`.
    * @defaultValue 'sheet-first'
    */
   behavior?: SheetNestedScrollBehavior
   /** Snap-point index at which an expanding drag is handed to content. */
   handoffAt?: 'max' | number
+  /** False keeps native scrolling enabled but disables handoff to the Sheet. */
   enabled?: boolean
+  /**
+   * Allow content at its start edge to collapse the Sheet in the same touch.
+   * False contains the drag in the content (for refresh or nested navigation).
+   * @defaultValue true
+   */
+  collapseAtStart?: boolean
+  /**
+   * Optional main-thread adapter for native containers with different boundary
+   * payloads. Return only boundaries known synchronously for this event.
+   */
+  'main-thread:getScrollBoundary'?: (
+    event: NativeGestureChangeEvent,
+  ) => SheetScrollBoundary
+  /**
+   * Main-thread ownership policy for specialized nesting. Return `default` to
+   * keep the built-in decision. It cannot bypass `content-only`.
+   */
+  'main-thread:resolveOwner'?: (
+    decision: SheetGestureDecision,
+  ) => 'default' | 'sheet' | 'content'
 }
 
-/** A gesture-enabled replacement for SheetContent. */
+/** A gesture-enabled replacement for SheetContent; all other parts are reused. */
 export interface SheetGestureContentProps extends SheetContentProps {
+  /** Native pan recognition thresholds. */
   gestureConfig?: SheetGestureConfig
+  /** Relationships with external gestures. */
   gestureRelations?: SheetGestureRelations
-  /**
-   * Advanced escape hatch for composing or replacing the default Sheet pan.
-   * This API is experimental and may change with gesture-runtime.
-   */
-  unstable_customizeGesture?: (defaultGesture: GestureKind) => GestureKind
 }
 
 /**

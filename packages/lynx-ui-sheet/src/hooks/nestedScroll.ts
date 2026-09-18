@@ -9,8 +9,9 @@ export interface ResolveNestedScrollOwnerOptions {
   delta: number
   position: number
   handoffPosition: number
-  contentAtStart: boolean
-  contentAtEnd: boolean
+  contentAtStart?: boolean
+  contentAtEnd?: boolean
+  collapseAtStart?: boolean
 }
 
 /** @internal */
@@ -21,12 +22,15 @@ export function resolveNestedScrollOwner({
   handoffPosition,
   contentAtStart,
   contentAtEnd,
+  collapseAtStart = true,
 }: ResolveNestedScrollOwnerOptions): 'sheet' | 'content' {
   'main thread'
-  if (behavior === 'disabled') return 'content'
-  if (delta < 0) return contentAtStart ? 'sheet' : 'content'
+  if (behavior === 'disabled' || behavior === 'content-only') return 'content'
+  if (delta < 0) {
+    return collapseAtStart && contentAtStart === true ? 'sheet' : 'content'
+  }
   if (delta > 0) {
-    if (behavior === 'content-first' && !contentAtEnd) return 'content'
+    if (behavior === 'content-first' && contentAtEnd !== true) return 'content'
     return position < handoffPosition ? 'sheet' : 'content'
   }
   return 'content'

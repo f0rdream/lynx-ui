@@ -21,9 +21,12 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 - In a descendant component, call `useSheetScrollGesture()` and bind the returned gesture directly to that scrolling node with `main-thread:gesture`.
 - Prefer `behavior: 'sheet-first'`: expanding drags move the Sheet to `handoffAt` before content scrolls, and collapsing drags transfer to the Sheet only when content is at its start.
 - Use `behavior: 'content-first'` when content must exhaust its scroll range before the Sheet expands.
-- Use `behavior: 'disabled'` when a particular nested scroll container must never hand its gesture to the Sheet.
+- Use `behavior: 'content-only'` when a nested scroll container must never hand its gesture to the Sheet; `disabled` is a deprecated alias.
+- Set `collapseAtStart: false` for refresh or nested navigation regions that must retain downward drags.
+- Use `main-thread:getScrollBoundary` only for native containers whose edge payload differs from scroll-view/list.
+- Use `main-thread:resolveOwner` for the final specialized policy gap instead of replacing the Sheet pan.
 - Set `handoffAt` to a snap-point index or `'max'`; do not encode direction combinations in consumer callbacks.
-- Use `gestureConfig` and `gestureRelations` for stable recognition/relationship customization. Reserve `unstable_customizeGesture` for gesture-runtime composition or replacement.
+- Use `gestureConfig` and `gestureRelations` for recognition and external gesture relationships. Do not replace the Sheet pan, because that breaks the nested native wait-for contract.
 
 ## Side Rules
 

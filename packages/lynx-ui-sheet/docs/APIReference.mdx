@@ -1718,7 +1718,7 @@ The main content of the Sheet.
 
 ### SheetGestureContent
 
-A gesture-enabled replacement for SheetContent.
+A gesture-enabled replacement for SheetContent; all other parts are reused.
 
 <UIApiTable source={[
   {
@@ -1812,7 +1812,12 @@ A gesture-enabled replacement for SheetContent.
   {
     "name": "gestureConfig",
     "type": "SheetGestureConfig",
-    "summary": [],
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Native pan recognition thresholds."
+      }
+    ],
     "summary_zh": [],
     "defaultValue": "",
     "isOption": true,
@@ -1824,7 +1829,12 @@ A gesture-enabled replacement for SheetContent.
   {
     "name": "gestureRelations",
     "type": "SheetGestureRelations",
-    "summary": [],
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Relationships with external gestures."
+      }
+    ],
     "summary_zh": [],
     "defaultValue": "",
     "isOption": true,
@@ -1968,25 +1978,10 @@ A gesture-enabled replacement for SheetContent.
     "isSupportAndroid": true,
     "isSupportHarmony": true,
     "docTypeFallback": null
-  },
-  {
-    "name": "unstable_customizeGesture",
-    "type": "(defaultGesture: GestureKind) => GestureKind",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Advanced escape hatch for composing or replacing the default Sheet pan.\nThis API is experimental and may change with gesture-runtime."
-      }
-    ],
-    "summary_zh": [],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": false,
-    "isSupportAndroid": false,
-    "isSupportHarmony": false,
-    "docTypeFallback": null
   }
 ]}/>
+
+
 
 
 

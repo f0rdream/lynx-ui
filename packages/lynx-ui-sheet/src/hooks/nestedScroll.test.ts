@@ -44,7 +44,7 @@ describe('resolveNestedScrollOwner', () => {
     ).toBe('sheet')
   })
 
-  it('collapses only when nested content is at its start', () => {
+  it('collapses only when nested content is known to be at its start', () => {
     expect(resolveNestedScrollOwner({ ...base, delta: -20 })).toBe('sheet')
     expect(
       resolveNestedScrollOwner({
@@ -53,15 +53,41 @@ describe('resolveNestedScrollOwner', () => {
         delta: -20,
       }),
     ).toBe('content')
-  })
-
-  it('can disable sheet handoff for an individual scroll container', () => {
     expect(
       resolveNestedScrollOwner({
         ...base,
-        behavior: 'disabled',
+        contentAtStart: undefined,
         delta: -20,
       }),
     ).toBe('content')
+  })
+
+  it('can contain downward drags for refresh or nested navigation', () => {
+    expect(
+      resolveNestedScrollOwner({
+        ...base,
+        collapseAtStart: false,
+        delta: -20,
+      }),
+    ).toBe('content')
+  })
+
+  it('supports the content-only name and deprecated disabled alias', () => {
+    for (const behavior of ['content-only', 'disabled'] as const) {
+      expect(
+        resolveNestedScrollOwner({
+          ...base,
+          behavior,
+          delta: -20,
+        }),
+      ).toBe('content')
+      expect(
+        resolveNestedScrollOwner({
+          ...base,
+          behavior,
+          delta: 20,
+        }),
+      ).toBe('content')
+    }
   })
 })

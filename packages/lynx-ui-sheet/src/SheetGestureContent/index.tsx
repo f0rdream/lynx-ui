@@ -15,7 +15,6 @@ export function SheetGestureContent(props: SheetGestureContentProps) {
   const {
     gestureConfig,
     gestureRelations,
-    unstable_customizeGesture,
     ...surfaceProps
   } = props
   const { context, effectiveRubberBand, snap, snapPoints } =
@@ -41,9 +40,7 @@ export function SheetGestureContent(props: SheetGestureContentProps) {
     onDragEndSnapMT: snap.onDragEndSnapMT,
     onDragEndCloseMT: snap.onDragEndCloseMT,
   })
-  const sheetGesture = unstable_customizeGesture
-    ? unstable_customizeGesture(defaultGesture)
-    : defaultGesture
+  const sheetGesture = defaultGesture
 
   return (
     <SheetGestureContext.Provider

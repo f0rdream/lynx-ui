@@ -84,13 +84,16 @@ The enumerable `behavior` policies are:
   downward drag at the content start collapses the Sheet.
 - `content-first`: scroll content first, then expand the Sheet when the content
   reaches its end; a downward drag at the content start collapses the Sheet.
-- `disabled`: keep the nested gesture entirely in the content.
+- `content-only`: keep the nested gesture entirely in the content. `disabled`
+  remains as a deprecated alias.
 
-`handoffAt` accepts a snap-point index or `'max'`. For advanced integration,
-`gestureConfig` and `gestureRelations` expose recognition and cross-gesture
-relationships. `unstable_customizeGesture` can compose or replace the default
-pan gesture, but is intentionally unstable because it follows the experimental
-gesture-runtime API.
+`handoffAt` accepts a snap-point index or `'max'`. Set `collapseAtStart={false}`
+when a nested region must retain downward drags, such as pull-to-refresh. For a
+custom native node, use `main-thread:getScrollBoundary` to normalize edge state;
+use `main-thread:resolveOwner` only when the built-in policies cannot express the
+handoff. Keep the Sheet pan itself intact so its native gesture relationships
+remain valid. `gestureConfig` and `gestureRelations` cover recognition thresholds
+and relationships with external gestures.
 
 ## About @lynx-js/lynx-ui
 

@@ -18,7 +18,9 @@ import type { ActiveSheetScrollGesture } from '../context'
 import { useSheetGestureContext } from '../context'
 import type {
   SheetGestureConfig,
+  SheetGestureDecision,
   SheetGestureRelations,
+  SheetScrollBoundary,
   SheetSide,
   UseSheetScrollGestureOptions,
 } from '../types'
@@ -137,14 +139,28 @@ export function useSheetPanGesture({
       let handoffPosition: number | undefined
       if (scroll) {
         handoffPosition = resolveHandoffPosition(scroll.handoffAt, offsets)
-        const owner = resolveNestedScrollOwner({
+        const defaultOwner = resolveNestedScrollOwner({
           behavior: scroll.behavior,
           delta,
           position: current,
           handoffPosition,
           contentAtStart: scroll.atStart,
           contentAtEnd: scroll.atEnd,
+          collapseAtStart: scroll.collapseAtStart,
         })
+        const decision: SheetGestureDecision = {
+          delta,
+          position: current,
+          handoffPosition,
+          atStart: scroll.atStart,
+          atEnd: scroll.atEnd,
+          defaultOwner,
+        }
+        const override = scroll.behavior === 'content-only'
+            || scroll.behavior === 'disabled'
+          ? 'content'
+          : (scroll.resolveOwner?.(decision) ?? 'default')
+        const owner = override === 'default' ? defaultOwner : override
         if (owner === 'content') {
           // The pan can have moved the sheet before reaching the handoff point.
           // Once the native scroller takes over, its eventual end must not snap
@@ -245,6 +261,22 @@ type NativeScrollParams = NativeGestureChangeEvent['params'] & {
   scrollY?: number
 }
 
+function getDefaultScrollBoundary(
+  resolvedSide: 'top' | 'bottom' | 'left' | 'right',
+  params: NativeScrollParams,
+): SheetScrollBoundary {
+  'main thread'
+  const scrollOffset = resolvedSide === 'left' || resolvedSide === 'right'
+    ? params.scrollX
+    : params.scrollY
+  return {
+    atStart: params.isAtStart ?? (scrollOffset === undefined
+      ? undefined
+      : scrollOffset <= 0),
+    atEnd: params.isAtEnd,
+  }
+}
+
 /** Bind the returned NativeGesture to a scroll-view, list, or fold-view. */
 export function useSheetScrollGesture(
   options: UseSheetScrollGestureOptions = {},
@@ -253,6 +285,9 @@ export function useSheetScrollGesture(
     behavior = 'sheet-first',
     handoffAt = 'max',
     enabled = true,
+    collapseAtStart = true,
+    'main-thread:getScrollBoundary': getScrollBoundary,
+    'main-thread:resolveOwner': resolveOwner,
   } = options
   const {
     sheetGesture,
@@ -268,7 +303,7 @@ export function useSheetScrollGesture(
   )
 
   nativeGesture
-    .enabled(enabled)
+    .enabled(true)
     .onBegin((_, manager) => {
       'main thread'
       // Start with the native recognizer consuming its stream. The sheet pan
@@ -279,19 +314,20 @@ export function useSheetScrollGesture(
     .onTouchesDown((event, manager) => {
       'main thread'
       const params = event.params as NativeScrollParams
-      const scrollOffset = resolvedSide === 'left' || resolvedSide === 'right'
-        ? params.scrollX
-        : params.scrollY
+      const boundary = getScrollBoundary?.(event)
+        ?? getDefaultScrollBoundary(resolvedSide, params)
       lastCoordinateMTRef.current = getMainAxisTouchCoordinate(
         resolvedSide,
         params,
       )
       scrollStateMTRef.current = {
         manager,
-        behavior,
+        behavior: enabled ? behavior : 'content-only',
         handoffAt,
-        atStart: params.isAtStart ?? (scrollOffset ?? 0) <= 0,
-        atEnd: params.isAtEnd ?? false,
+        collapseAtStart,
+        atStart: boundary.atStart,
+        atEnd: boundary.atEnd,
+        resolveOwner,
       }
       if (activeScrollMTRef) {
         activeScrollMTRef.current = scrollStateMTRef.current
@@ -302,24 +338,39 @@ export function useSheetScrollGesture(
       const params = event.params as NativeScrollParams
       const state = scrollStateMTRef.current
       if (!state) return
-      const scrollOffset = resolvedSide === 'left' || resolvedSide === 'right'
-        ? params.scrollX
-        : params.scrollY
-      state.atStart = params.isAtStart ?? (scrollOffset ?? 0) <= 0
-      state.atEnd = params.isAtEnd ?? false
+      const boundary = getScrollBoundary?.(event)
+        ?? getDefaultScrollBoundary(resolvedSide, params)
+      state.atStart = boundary.atStart
+      state.atEnd = boundary.atEnd
       const coordinate = getMainAxisTouchCoordinate(resolvedSide, params)
       const rawDelta = coordinate - lastCoordinateMTRef.current
       lastCoordinateMTRef.current = coordinate
       const sheetDelta = getNextMainAxisOffset(resolvedSide, 0, rawDelta)
       const offsets = getResolvedSnapOffsets?.() ?? []
-      const owner = resolveNestedScrollOwner({
-        behavior,
+      const currentPosition = position?.current.get() ?? 0
+      const handoffPosition = resolveHandoffPosition(handoffAt, offsets)
+      const defaultOwner = resolveNestedScrollOwner({
+        behavior: state.behavior,
         delta: sheetDelta,
-        position: position?.current.get() ?? 0,
-        handoffPosition: resolveHandoffPosition(handoffAt, offsets),
+        position: currentPosition,
+        handoffPosition,
         contentAtStart: state.atStart,
         contentAtEnd: state.atEnd,
+        collapseAtStart: state.collapseAtStart,
       })
+      const decision: SheetGestureDecision = {
+        delta: sheetDelta,
+        position: currentPosition,
+        handoffPosition,
+        atStart: state.atStart,
+        atEnd: state.atEnd,
+        defaultOwner,
+      }
+      const override = state.behavior === 'content-only'
+          || state.behavior === 'disabled'
+        ? 'content'
+        : (state.resolveOwner?.(decision) ?? 'default')
+      const owner = override === 'default' ? defaultOwner : override
       if (owner === 'sheet') {
         manager.consumeGesture(false)
         manager.fail()

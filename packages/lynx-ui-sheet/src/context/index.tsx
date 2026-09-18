@@ -12,6 +12,7 @@ import type { MotionValue } from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
 
 import type {
+  SheetGestureDecision,
   SheetNestedScrollBehavior,
   SheetSide,
   SheetTransition,
@@ -84,8 +85,12 @@ export interface ActiveSheetScrollGesture {
   manager: StateManager | null
   behavior: SheetNestedScrollBehavior
   handoffAt: 'max' | number
-  atStart: boolean
-  atEnd: boolean
+  collapseAtStart: boolean
+  atStart?: boolean
+  atEnd?: boolean
+  resolveOwner?: (
+    decision: SheetGestureDecision,
+  ) => 'default' | 'sheet' | 'content'
 }
 
 export interface SheetGestureContextValue {
