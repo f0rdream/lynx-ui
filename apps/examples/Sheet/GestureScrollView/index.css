@@ -1,0 +1,22 @@
+@import "../shared/base.css";
+
+.gesture-sheet-inner {
+  height: 100%;
+  display: linear;
+  linear-orientation: vertical;
+  background: var(--canvas);
+}
+
+.nested-scroll {
+  width: 100%;
+  height: calc(100% - 32px);
+}
+
+.nested-item {
+  width: 100%;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--content);
+}
