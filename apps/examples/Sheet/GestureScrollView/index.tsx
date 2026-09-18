@@ -26,7 +26,6 @@ const colors = [
 
 function NestedScrollView() {
   const gesture = useSheetScrollGesture({
-    behavior: 'sheet-first',
     handoffAt: 'max',
   })
   return (
@@ -54,6 +53,10 @@ function App() {
   return (
     <view className='demo-container lunaris-dark'>
       <text className='title-text'>Gesture Sheet + ScrollView</text>
+      <text className='subtitle-text'>
+        Drag once: the Sheet expands first, then the ScrollView continues
+        without lifting your finger.
+      </text>
       <TriggerButton
         onClick={() => sheetRef.current?.open()}
         text='Open Sheet'
@@ -66,6 +69,12 @@ function App() {
             innerClassName='gesture-sheet-inner'
           >
             <SheetHandle className='sheet-handle' />
+            <view className='example-description'>
+              <text className='example-label'>Default handoff</text>
+              <text className='example-copy'>
+                Sheet expands to handoffAt='max', then content scrolls
+              </text>
+            </view>
             <NestedScrollView />
           </SheetGestureContent>
         </SheetView>

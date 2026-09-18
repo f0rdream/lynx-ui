@@ -18,7 +18,9 @@ import { TriggerButton } from '../shared/index.js'
 import './index.css'
 
 function NestedList() {
-  const gesture = useSheetScrollGesture({ behavior: 'sheet-first' })
+  const gesture = useSheetScrollGesture({
+    handoffAt: 1,
+  })
   return (
     <list
       className='nested-list'
@@ -47,11 +49,18 @@ function App() {
   return (
     <view className='demo-container lunaris-dark'>
       <text className='title-text'>Gesture Sheet + List</text>
+      <text className='subtitle-text'>
+        A numeric handoffAt selects the snap point where content takes over.
+      </text>
       <TriggerButton
         onClick={() => sheetRef.current?.open()}
         text='Open Sheet'
       />
-      <SheetRoot ref={sheetRef} snapPoints={['40%', '90%']} initialSnap={0}>
+      <SheetRoot
+        ref={sheetRef}
+        snapPoints={['35%', '65%', '90%']}
+        initialSnap={0}
+      >
         <SheetView className='sheet-viewport'>
           <SheetBackdrop className='sheet-overlay' />
           <SheetGestureContent
@@ -59,6 +68,12 @@ function App() {
             innerClassName='gesture-sheet-inner'
           >
             <SheetHandle className='sheet-handle' />
+            <view className='example-description'>
+              <text className='example-label'>Custom handoff point</text>
+              <text className='example-copy'>
+                handoffAt=1 · List starts scrolling at the 65% snap point
+              </text>
+            </view>
             <NestedList />
           </SheetGestureContent>
         </SheetView>
