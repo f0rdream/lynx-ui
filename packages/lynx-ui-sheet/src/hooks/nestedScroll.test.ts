@@ -7,15 +7,13 @@ import { describe, expect, it } from 'vitest'
 import { resolveNestedScrollOwner } from './nestedScroll'
 
 const base = {
-  behavior: 'sheet-first' as const,
   position: 400,
-  handoffPosition: 800,
+  maximumPosition: 800,
   contentAtStart: true,
-  contentAtEnd: false,
 }
 
 describe('resolveNestedScrollOwner', () => {
-  it('expands the sheet to the handoff snap before scrolling content', () => {
+  it('expands the Sheet fully before scrolling content', () => {
     expect(resolveNestedScrollOwner({ ...base, delta: 20 })).toBe('sheet')
     expect(
       resolveNestedScrollOwner({
@@ -26,25 +24,7 @@ describe('resolveNestedScrollOwner', () => {
     ).toBe('content')
   })
 
-  it('lets content-first scroll before expanding the sheet', () => {
-    expect(
-      resolveNestedScrollOwner({
-        ...base,
-        behavior: 'content-first',
-        delta: 20,
-      }),
-    ).toBe('content')
-    expect(
-      resolveNestedScrollOwner({
-        ...base,
-        behavior: 'content-first',
-        contentAtEnd: true,
-        delta: 20,
-      }),
-    ).toBe('sheet')
-  })
-
-  it('collapses only when nested content is known to be at its start', () => {
+  it('collapses only when content is known to be at its start', () => {
     expect(resolveNestedScrollOwner({ ...base, delta: -20 })).toBe('sheet')
     expect(
       resolveNestedScrollOwner({
@@ -62,32 +42,7 @@ describe('resolveNestedScrollOwner', () => {
     ).toBe('content')
   })
 
-  it('can contain downward drags for refresh or nested navigation', () => {
-    expect(
-      resolveNestedScrollOwner({
-        ...base,
-        collapseAtStart: false,
-        delta: -20,
-      }),
-    ).toBe('content')
-  })
-
-  it('supports the content-only name and deprecated disabled alias', () => {
-    for (const behavior of ['content-only', 'disabled'] as const) {
-      expect(
-        resolveNestedScrollOwner({
-          ...base,
-          behavior,
-          delta: -20,
-        }),
-      ).toBe('content')
-      expect(
-        resolveNestedScrollOwner({
-          ...base,
-          behavior,
-          delta: 20,
-        }),
-      ).toBe('content')
-    }
+  it('keeps stationary updates with content', () => {
+    expect(resolveNestedScrollOwner({ ...base, delta: 0 })).toBe('content')
   })
 })

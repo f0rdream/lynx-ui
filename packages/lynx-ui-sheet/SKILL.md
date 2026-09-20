@@ -18,15 +18,11 @@ Use it when a UI needs a dismissible panel that slides from an edge of the viewp
 ## Nested Scroll Rules
 
 - Use `SheetGestureContent` when the content contains a `scroll-view`, `list`, FoldView, or another native scrolling node.
-- In a descendant component, call `useSheetScrollGesture()` and bind the returned gesture directly to that scrolling node with `main-thread:gesture`.
-- Prefer `behavior: 'sheet-first'`: expanding drags move the Sheet to `handoffAt` before content scrolls, and collapsing drags transfer to the Sheet only when content is at its start.
-- Use `behavior: 'content-first'` when content must exhaust its scroll range before the Sheet expands.
-- Use `behavior: 'content-only'` when a nested scroll container must never hand its gesture to the Sheet; `disabled` is a deprecated alias.
-- Set `collapseAtStart: false` for refresh or nested navigation regions that must retain downward drags.
-- Use `main-thread:getScrollBoundary` only for native containers whose edge payload differs from scroll-view/list.
-- Use `main-thread:resolveOwner` for the final specialized policy gap instead of replacing the Sheet pan.
-- Set `handoffAt` to a snap-point index or `'max'`; do not encode direction combinations in consumer callbacks.
-- Use `gestureConfig` and `gestureRelations` for recognition and external gesture relationships. Do not replace the Sheet pan, because that breaks the nested native wait-for contract.
+- Prefer its render prop for a nearby scroll node: bind `scrollGesture` to the outermost vertical scrolling node with `main-thread:gesture`.
+- In deeply nested content, call the argument-free `useSheetScrollGesture()` Hook. It returns the same gesture object created by the nearest `SheetGestureContent`; it does not create or configure another gesture.
+- The ownership rule is fixed and directionally natural: upward drags expand the Sheet to its maximum snap before content scrolls; downward drags scroll content to its start before the Sheet collapses. Handoff can occur without lifting the finger.
+- To keep a native scrolling region independent of the Sheet, do not bind the shared gesture to that region.
+- Use `gestureConfig` and `gestureRelations` on `SheetGestureContent` only for recognition thresholds and external gesture relationships. Do not replace the Sheet pan or add per-scroll ownership policies.
 
 ## Side Rules
 

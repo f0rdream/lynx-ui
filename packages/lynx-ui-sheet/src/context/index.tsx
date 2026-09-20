@@ -11,12 +11,7 @@ import type { PresenceState } from '@lynx-js/lynx-ui-presence'
 import type { MotionValue } from '@lynx-js/motion/mini'
 import type { MainThread } from '@lynx-js/types'
 
-import type {
-  SheetGestureDecision,
-  SheetNestedScrollBehavior,
-  SheetSide,
-  SheetTransition,
-} from '../types'
+import type { SheetSide, SheetTransition } from '../types'
 import type { SheetResolvedSide } from '../utils'
 
 export interface SheetMethods {
@@ -83,22 +78,13 @@ export interface SheetDragContextValue {
 
 export interface ActiveSheetScrollGesture {
   manager: StateManager | null
-  behavior: SheetNestedScrollBehavior
-  handoffAt: 'max' | number
-  collapseAtStart: boolean
   atStart?: boolean
-  atEnd?: boolean
-  resolveOwner?: (
-    decision: SheetGestureDecision,
-  ) => 'default' | 'sheet' | 'content'
 }
 
 export interface SheetGestureContextValue {
   sheetGesture?: GestureKind
+  scrollGesture?: GestureKind
   activeScrollMTRef?: MainThreadRef<ActiveSheetScrollGesture | null>
-  resolvedSide: SheetResolvedSide
-  position?: MainThreadRef<MotionValue<number>>
-  getResolvedSnapOffsets?: () => number[]
 }
 
 // @ts-expect-error MT initialize is useless
@@ -116,9 +102,6 @@ export const SheetContext = createContext<SheetContextValue>({
 
 export function useSheetContext() {
   const context = useContext(SheetContext)
-  // Context is optional for some components, but mandatory for Handle
-  // If we want to allow SheetHandle to be used without context (safe fallback), we can return null or empty handlers.
-  // But typically it should be inside a SheetContent.
   if (!context) {
     throw new Error(
       'SheetRoot should be placed at the root of the component tree',
@@ -134,9 +117,7 @@ export function useSheetDragContext() {
   return useContext(SheetDragContext)
 }
 
-export const SheetGestureContext = createContext<SheetGestureContextValue>({
-  resolvedSide: 'bottom',
-})
+export const SheetGestureContext = createContext<SheetGestureContextValue>({})
 
 export function useSheetGestureContext() {
   return useContext(SheetGestureContext)

@@ -295,17 +295,14 @@ export type {
   SheetContentProps,
   SheetGestureConfig,
   SheetGestureContentProps,
-  SheetGestureDecision,
+  SheetGestureRenderProps,
   SheetGestureRelations,
-  SheetNestedScrollBehavior,
-  SheetScrollBoundary,
   SheetRootProps,
   SheetRootRef,
   SheetSide,
   SheetViewProps,
   SheetHandleProps,
   SheetTransition,
-  UseSheetScrollGestureOptions,
 } from '@lynx-js/lynx-ui-sheet'
 
 // slider

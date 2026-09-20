@@ -2,36 +2,31 @@
 // Licensed under the Apache License Version 2.0 that can be found in the
 // LICENSE file in the root directory of this source tree.
 
-import type { SheetNestedScrollBehavior } from '../types'
-
 export interface ResolveNestedScrollOwnerOptions {
-  behavior: SheetNestedScrollBehavior
+  /** Positive expands the Sheet; negative collapses it, independent of side. */
   delta: number
+  /** Visible Sheet size in pixels. */
   position: number
-  handoffPosition: number
+  /** The maximum visible Sheet size. */
+  maximumPosition: number
+  /** Whether the scrolling content is synchronously known to be at its start. */
   contentAtStart?: boolean
-  contentAtEnd?: boolean
-  collapseAtStart?: boolean
 }
 
-/** @internal */
+/**
+ * Resolve the fixed, natural nested-scroll policy:
+ * expanding drags move the Sheet to its maximum position before content scrolls;
+ * collapsing drags remain in content until it reaches its start.
+ * @internal
+ */
 export function resolveNestedScrollOwner({
-  behavior,
   delta,
   position,
-  handoffPosition,
+  maximumPosition,
   contentAtStart,
-  contentAtEnd,
-  collapseAtStart = true,
 }: ResolveNestedScrollOwnerOptions): 'sheet' | 'content' {
   'main thread'
-  if (behavior === 'disabled' || behavior === 'content-only') return 'content'
-  if (delta < 0) {
-    return collapseAtStart && contentAtStart === true ? 'sheet' : 'content'
-  }
-  if (delta > 0) {
-    if (behavior === 'content-first' && contentAtEnd !== true) return 'content'
-    return position < handoffPosition ? 'sheet' : 'content'
-  }
+  if (delta > 0) return position < maximumPosition ? 'sheet' : 'content'
+  if (delta < 0) return contentAtStart === true ? 'sheet' : 'content'
   return 'content'
 }

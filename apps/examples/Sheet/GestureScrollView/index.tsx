@@ -10,7 +10,6 @@ import {
   SheetHandle,
   SheetRoot,
   SheetView,
-  useSheetScrollGesture,
 } from '@lynx-js/lynx-ui'
 import type { SheetRootRef } from '@lynx-js/lynx-ui'
 
@@ -23,30 +22,6 @@ const colors = [
   'var(--paper)',
   'var(--neutral-ambient)',
 ]
-
-function NestedScrollView() {
-  const gesture = useSheetScrollGesture({
-    handoffAt: 'max',
-  })
-  return (
-    <scroll-view
-      className='nested-scroll'
-      scroll-orientation='vertical'
-      bounces={false}
-      main-thread:gesture={gesture}
-    >
-      {Array.from({ length: 20 }, (_, index) => (
-        <view
-          className='nested-item'
-          style={{ backgroundColor: colors[index % colors.length] }}
-          key={index}
-        >
-          <text>{`ScrollView item ${index + 1}`}</text>
-        </view>
-      ))}
-    </scroll-view>
-  )
-}
 
 function App() {
   const sheetRef = useRef<SheetRootRef>(null)
@@ -68,14 +43,35 @@ function App() {
             className='sheet-content'
             innerClassName='gesture-sheet-inner'
           >
-            <SheetHandle className='sheet-handle' />
-            <view className='example-description'>
-              <text className='example-label'>Default handoff</text>
-              <text className='example-copy'>
-                Sheet expands to handoffAt='max', then content scrolls
-              </text>
-            </view>
-            <NestedScrollView />
+            {({ scrollGesture }) => (
+              <>
+                <SheetHandle className='sheet-handle' />
+                <view className='example-description'>
+                  <text className='example-label'>Default handoff</text>
+                  <text className='example-copy'>
+                    Sheet expands fully, then content scrolls in the same drag
+                  </text>
+                </view>
+                <scroll-view
+                  className='nested-scroll'
+                  scroll-orientation='vertical'
+                  bounces={false}
+                  main-thread:gesture={scrollGesture}
+                >
+                  {Array.from({ length: 20 }, (_, index) => (
+                    <view
+                      className='nested-item'
+                      style={{
+                        backgroundColor: colors[index % colors.length],
+                      }}
+                      key={index}
+                    >
+                      <text>{`ScrollView item ${index + 1}`}</text>
+                    </view>
+                  ))}
+                </scroll-view>
+              </>
+            )}
           </SheetGestureContent>
         </SheetView>
       </SheetRoot>

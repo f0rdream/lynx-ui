@@ -1723,24 +1723,19 @@ A gesture-enabled replacement for SheetContent; all other parts are reused.
 <UIApiTable source={[
   {
     "name": "children",
-    "type": "ReactNode",
+    "type": "ReactNode | (props: SheetGestureRenderProps) => ReactNode",
     "summary": [
       {
         "kind": "text",
-        "text": "children"
+        "text": "Regular content or a render function receiving the coordinated scroll\ngesture. Deep descendants can access the same gesture with\nuseSheetScrollGesture()."
       }
     ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "子元素"
-      }
-    ],
+    "summary_zh": [],
     "defaultValue": "",
     "isOption": true,
-    "isSupportIOS": true,
-    "isSupportAndroid": true,
-    "isSupportHarmony": true,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
     "docTypeFallback": null
   },
   {
@@ -1832,7 +1827,7 @@ A gesture-enabled replacement for SheetContent; all other parts are reused.
     "summary": [
       {
         "kind": "text",
-        "text": "Relationships with external gestures."
+        "text": "Relationships between the Sheet pan and external gestures."
       }
     ],
     "summary_zh": [],
@@ -1980,9 +1975,6 @@ A gesture-enabled replacement for SheetContent; all other parts are reused.
     "docTypeFallback": null
   }
 ]}/>
-
-
-
 
 
 

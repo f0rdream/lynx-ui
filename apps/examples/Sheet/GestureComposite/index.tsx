@@ -38,9 +38,7 @@ function HorizontalCategories() {
 }
 
 function FoldLikeContent() {
-  const verticalGesture = useSheetScrollGesture({
-    handoffAt: 'max',
-  })
+  const verticalGesture = useSheetScrollGesture()
 
   return (
     <scroll-view

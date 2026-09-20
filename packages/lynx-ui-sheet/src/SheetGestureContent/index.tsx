@@ -7,22 +7,31 @@ import { useMainThreadRef } from '@lynx-js/react'
 import type { ActiveSheetScrollGesture } from '../context'
 import { SheetGestureContext } from '../context'
 import { useSheetContentController } from '../hooks/useSheetContentController'
-import { useSheetPanGesture } from '../hooks/useSheetGestures'
+import {
+  useSheetNativeScrollGesture,
+  useSheetPanGesture,
+} from '../hooks/useSheetGestures'
 import { SheetSurface } from '../SheetSurface'
 import type { SheetGestureContentProps } from '../types'
 
+/**
+ * A gesture-runtime backed replacement for SheetContent.
+ * It creates one coordinated native scroll gesture and exposes that same
+ * gesture through both its render prop and useSheetScrollGesture().
+ */
 export function SheetGestureContent(props: SheetGestureContentProps) {
   const {
+    children,
     gestureConfig,
     gestureRelations,
     ...surfaceProps
   } = props
   const { context, effectiveRubberBand, snap, snapPoints } =
-    useSheetContentController(props)
+    useSheetContentController(surfaceProps)
   const activeScrollMTRef = useMainThreadRef<ActiveSheetScrollGesture | null>(
     null,
   )
-  const defaultGesture = useSheetPanGesture({
+  const sheetGesture = useSheetPanGesture({
     side: context.side,
     enableRTL: context.enableRTL,
     dragDisabled: context.dragDisabled,
@@ -40,16 +49,23 @@ export function SheetGestureContent(props: SheetGestureContentProps) {
     onDragEndSnapMT: snap.onDragEndSnapMT,
     onDragEndCloseMT: snap.onDragEndCloseMT,
   })
-  const sheetGesture = defaultGesture
+  const scrollGesture = useSheetNativeScrollGesture({
+    sheetGesture,
+    activeScrollMTRef,
+    resolvedSide: context.resolvedSide,
+    position: snap.yRef,
+    getResolvedSnapOffsets: snap.getResolvedSnapOffsets,
+  })
+  const resolvedChildren = typeof children === 'function'
+    ? children({ scrollGesture })
+    : children
 
   return (
     <SheetGestureContext.Provider
       value={{
         sheetGesture,
+        scrollGesture,
         activeScrollMTRef,
-        resolvedSide: context.resolvedSide,
-        position: snap.yRef,
-        getResolvedSnapOffsets: snap.getResolvedSnapOffsets,
       }}
     >
       <SheetSurface
@@ -63,7 +79,9 @@ export function SheetGestureContent(props: SheetGestureContentProps) {
         setSheetMTRef={snap.setSheetMTRef}
         setContentMTRef={snap.setContentMTRef}
         handleSheetLayoutChangeMT={snap.handleSheetLayoutChangeMT}
-      />
+      >
+        {resolvedChildren}
+      </SheetSurface>
     </SheetGestureContext.Provider>
   )
 }
