@@ -38,6 +38,7 @@ export interface SortableRootProps<T> {
    * @zh 指定 SortableRoot 渲染并持有的滚动容器类型。
    * - `'ScrollView'`：渲染一个内部的纵向 `scroll-view`。
    * - 不传（默认）：渲染普通 `view`，不带滚动能力。
+   * @docTypeFallback 'ScrollView'
    */
   as?: 'ScrollView'
   /**
@@ -98,6 +99,7 @@ export interface SortableRootProps<T> {
    * @iOS
    * @Harmony
    * @zh 子节点，是一个接收 item 并返回 ReactNode 的函数。
+   * @docTypeFallback (item: {dataItem: T, getSortingKey: () => string}) => ReactNode
    */
   children: (item: SortableData<T>) => ReactNode
   /**

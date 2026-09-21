@@ -243,6 +243,19 @@ function getDeclaredUiVariantKeys(): Set<string> {
   return keys
 }
 
+export function getDefaultUiVariantDescription(
+  renderPropKey: string,
+  propType: unknown,
+): string {
+  if (
+    typeof propType === 'string'
+    && propType.split('|').some(type => type.trim() === 'null')
+  ) {
+    return `Applied when \`status.${renderPropKey}\` is not \`null\`.`
+  }
+  return `Applied when \`status.${renderPropKey}\` is true.`
+}
+
 function isRenderFunctionChildrenProp(prop: unknown): boolean {
   const p = prop as { name?: unknown, type?: unknown } | null
   if (!p || p.name !== 'children') return false
@@ -405,11 +418,12 @@ function mergeRenderPropsAndUiVariants(
     const renderPropKey = typeof item?.['Render Prop'] === 'string'
       ? item['Render Prop']
       : null
+    const renderPropType = (item as any)?.item?.type
 
     const uiDescEn = classNameStr.length > 0
       ? (uiVariantDescriptionsEn[classNameStr]
         ?? (renderPropKey
-          ? `Applied when \`status.${renderPropKey}\` is true.`
+          ? getDefaultUiVariantDescription(renderPropKey, renderPropType)
           : undefined))
       : undefined
     const uiDescZh = classNameStr.length > 0
@@ -660,8 +674,6 @@ const doGenTplWithData = async (
   // render-prop table don't ship an unused import.
   const mdxHeader =
     `import { UIApiTable, ClassRenderPropTable, ClassRenderPropPreamble } from "@lynx-ui/index";
-
-<!-- cspell:disable -->
 `
 
   if (multipleProps) {

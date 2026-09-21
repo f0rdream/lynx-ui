@@ -1,7 +1,5 @@
 import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
 
-<!-- cspell:disable -->
-
 
 
 ## ScrollViewProps
@@ -1094,7 +1092,7 @@ import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
   },
   {
     "name": "onContentSizeChange",
-    "type": "(res: Record<string, unknown>) => void",
+    "type": "(res: {detail: {scrollHeight: number, scrollWidth: number}}) => void",
     "summary": [
       {
         "kind": "text",

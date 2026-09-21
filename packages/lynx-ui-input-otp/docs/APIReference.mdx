@@ -1,162 +1,11 @@
 import { UIApiTable, ClassRenderPropTable, ClassRenderPropPreamble } from "@lynx-ui/index";
 
-### InputOTPSlot
 
-    Props for an individual InputOTP visual slot.
 
-<UIApiTable source={[
-  {
-    "name": "className",
-    "type": "string",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "className"
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "类名"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": true,
-    "isSupportAndroid": true,
-    "isSupportHarmony": true,
-    "docTypeFallback": null
-  },
-  {
-    "name": "index",
-    "type": "number",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Zero-based index used to read the corresponding InputOTP character."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "从零开始的索引，用于读取 InputOTP 中对应的字符。"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": false,
-    "isSupportIOS": true,
-    "isSupportAndroid": true,
-    "isSupportHarmony": true,
-    "docTypeFallback": null
-  },
-  {
-    "name": "style",
-    "type": "CSSProperties",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "style"
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "样式"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": true,
-    "isSupportAndroid": true,
-    "isSupportHarmony": true,
-    "docTypeFallback": null
-  }
-]}/>
-
-<UIApiTable source={[
-  {
-    "name": "children",
-    "type": "ReactNode | [object Object]",
-    "summary": [
-      {
-        "kind": "text",
-        "text": "Custom slot content. A render function receives the slot state.\nWhen omitted, InputOTPSlot renders its character and visual caret."
-      }
-    ],
-    "summary_zh": [
-      {
-        "kind": "text",
-        "text": "自定义输入槽内容。渲染函数会接收输入槽状态。省略时，\nInputOTPSlot 会渲染默认字符和可视光标。"
-      }
-    ],
-    "defaultValue": "",
-    "isOption": true,
-    "isSupportIOS": true,
-    "isSupportAndroid": true,
-    "isSupportHarmony": true,
-    "docTypeFallback": {
-      "tag": "@docTypeFallback",
-      "content": [
-        {
-          "kind": "text",
-          "text": "ReactNode | ((state: InputOTPSlotRenderProps) => ReactNode)"
-        }
-      ]
-    }
-  }
-]}/>
-<ClassRenderPropPreamble />
-<ClassRenderPropTable source={[
-  {
-    "className": "ui-complete",
-    "Render Prop": "complete",
-    "item": {
-      "type": "boolean",
-      "description": "Whether every slot in the field is filled.\nApplied to every slot when the field is complete.",
-      "description_zh": "当前输入框中的所有输入槽是否均已填充。\n输入完成时应用于每个输入槽。"
-    }
-  },
-  {
-    "className": "ui-disabled",
-    "Render Prop": "disabled",
-    "item": {
-      "type": "boolean",
-      "description": "Whether input is disabled.\nApplied to the slot while input is disabled.",
-      "description_zh": "输入是否已禁用。\n禁用输入时应用于输入槽。"
-    }
-  },
-  {
-    "className": "ui-filled",
-    "Render Prop": "filled",
-    "item": {
-      "type": "boolean",
-      "description": "Whether this slot contains a character.\nApplied to slots that contain a character.",
-      "description_zh": "当前输入槽是否已经包含字符。\n应用于已经包含字符的输入槽。"
-    }
-  },
-  {
-    "className": "ui-focused",
-    "Render Prop": "focused",
-    "item": {
-      "type": "boolean",
-      "description": "Whether this is the focused slot that contains the visual caret.\nApplied to the slot that contains the visual caret.",
-      "description_zh": "当前输入槽是否为包含可视光标的聚焦槽。\n应用于包含可视光标的输入槽。"
-    }
-  },
-  {
-    "className": "ui-invalid",
-    "Render Prop": "invalid",
-    "item": {
-      "type": "boolean",
-      "description": "Whether the field is invalid.\nApplied to the slot while the value is invalid.",
-      "description_zh": "输入是否处于无效状态。\n输入值无效时应用于输入槽。"
-    }
-  }
-]}/>
 
 ### InputOTP
 
-    Props for InputOTP.
+Props for InputOTP.
 
 <UIApiTable source={[
   {
@@ -403,7 +252,7 @@ import { UIApiTable, ClassRenderPropTable, ClassRenderPropPreamble } from "@lynx
   },
   {
     "name": "ref",
-    "type": "ForwardedRef",
+    "type": "ForwardedRef<InputOTPRef>",
     "summary": [],
     "summary_zh": [],
     "defaultValue": "",
@@ -462,7 +311,7 @@ import { UIApiTable, ClassRenderPropTable, ClassRenderPropPreamble } from "@lynx
 <UIApiTable source={[
   {
     "name": "children",
-    "type": "ReactNode | [object Object]",
+    "type": "ReactNode | ((state: InputOTPRenderProps) => ReactNode)",
     "summary": [
       {
         "kind": "text",
@@ -531,12 +380,210 @@ import { UIApiTable, ClassRenderPropTable, ClassRenderPropPreamble } from "@lynx
   }
 ]}/>
 
+
+
+
+### InputOTP
+
+<UIApiTable source={[
+  {
+    "name": "InputOTP",
+    "type": "(props: InputOTPProps) => ReactElement",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+
+
+
+### InputOTPSlot
+
+Props for an individual InputOTP visual slot.
+
+<UIApiTable source={[
+  {
+    "name": "className",
+    "type": "string",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "className"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "类名"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "index",
+    "type": "number",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Zero-based index used to read the corresponding InputOTP character."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "从零开始的索引，用于读取 InputOTP 中对应的字符。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  },
+  {
+    "name": "style",
+    "type": "CSSProperties",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "style"
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "样式"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": null
+  }
+]}/>
+
+<UIApiTable source={[
+  {
+    "name": "children",
+    "type": "ReactNode | ((state: InputOTPSlotRenderProps) => ReactNode)",
+    "summary": [
+      {
+        "kind": "text",
+        "text": "Custom slot content. A render function receives the slot state.\nWhen omitted, InputOTPSlot renders its character and visual caret."
+      }
+    ],
+    "summary_zh": [
+      {
+        "kind": "text",
+        "text": "自定义输入槽内容。渲染函数会接收输入槽状态。省略时，\nInputOTPSlot 会渲染默认字符和可视光标。"
+      }
+    ],
+    "defaultValue": "",
+    "isOption": true,
+    "isSupportIOS": true,
+    "isSupportAndroid": true,
+    "isSupportHarmony": true,
+    "docTypeFallback": {
+      "tag": "@docTypeFallback",
+      "content": [
+        {
+          "kind": "text",
+          "text": "ReactNode | ((state: InputOTPSlotRenderProps) => ReactNode)"
+        }
+      ]
+    }
+  }
+]}/>
+<ClassRenderPropPreamble />
+<ClassRenderPropTable source={[
+  {
+    "className": "ui-complete",
+    "Render Prop": "complete",
+    "item": {
+      "type": "boolean",
+      "description": "Whether every slot in the field is filled.\nApplied to every slot when the field is complete.",
+      "description_zh": "当前输入框中的所有输入槽是否均已填充。\n输入完成时应用于每个输入槽。"
+    }
+  },
+  {
+    "className": "ui-disabled",
+    "Render Prop": "disabled",
+    "item": {
+      "type": "boolean",
+      "description": "Whether input is disabled.\nApplied to the slot while input is disabled.",
+      "description_zh": "输入是否已禁用。\n禁用输入时应用于输入槽。"
+    }
+  },
+  {
+    "className": "ui-filled",
+    "Render Prop": "filled",
+    "item": {
+      "type": "boolean",
+      "description": "Whether this slot contains a character.\nApplied to slots that contain a character.",
+      "description_zh": "当前输入槽是否已经包含字符。\n应用于已经包含字符的输入槽。"
+    }
+  },
+  {
+    "className": "ui-focused",
+    "Render Prop": "focused",
+    "item": {
+      "type": "boolean",
+      "description": "Whether this is the focused slot that contains the visual caret.\nApplied to the slot that contains the visual caret.",
+      "description_zh": "当前输入槽是否为包含可视光标的聚焦槽。\n应用于包含可视光标的输入槽。"
+    }
+  },
+  {
+    "className": "ui-invalid",
+    "Render Prop": "invalid",
+    "item": {
+      "type": "boolean",
+      "description": "Whether the field is invalid.\nApplied to the slot while the value is invalid.",
+      "description_zh": "输入是否处于无效状态。\n输入值无效时应用于输入槽。"
+    }
+  }
+]}/>
+
+
+### InputOTPSlot
+
+<UIApiTable source={[
+  {
+    "name": "InputOTPSlot",
+    "type": "(props: InputOTPSlotProps) => ReactElement",
+    "summary": [],
+    "summary_zh": [],
+    "defaultValue": "",
+    "isOption": false,
+    "isSupportIOS": false,
+    "isSupportAndroid": false,
+    "isSupportHarmony": false,
+    "docTypeFallback": null
+  }
+]}/>
+
+
 ## InputOTPRef
+
+Imperative methods exposed by InputOTP.
 
 <UIApiTable source={[
   {
     "name": "blur",
-    "type": "() => Promise",
+    "type": "() => Promise<void>",
     "summary": [
       {
         "kind": "text",
@@ -558,7 +605,7 @@ import { UIApiTable, ClassRenderPropTable, ClassRenderPropPreamble } from "@lynx
   },
   {
     "name": "clear",
-    "type": "() => Promise",
+    "type": "() => Promise<void>",
     "summary": [
       {
         "kind": "text",
@@ -580,7 +627,7 @@ import { UIApiTable, ClassRenderPropTable, ClassRenderPropPreamble } from "@lynx
   },
   {
     "name": "focus",
-    "type": "() => Promise",
+    "type": "() => Promise<void>",
     "summary": [
       {
         "kind": "text",
@@ -624,7 +671,7 @@ import { UIApiTable, ClassRenderPropTable, ClassRenderPropPreamble } from "@lynx
   },
   {
     "name": "setValue",
-    "type": "(value: string) => Promise",
+    "type": "(value: string) => Promise<void>",
     "summary": [
       {
         "kind": "text",

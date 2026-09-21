@@ -51,6 +51,7 @@ export interface SwiperProps<T> {
    *    )}
    *  </Swiper>
    * ```
+   * @docTypeFallback (prop: {index: number, item: T, realIndex: number}) => ReactElement
    */
   children: (prop: RenderFunctionProps<T>) => ReactElement
   /**
@@ -384,6 +385,7 @@ export interface BounceConfig {
    * @iOS
    * @Harmony
    * @zh 当startBounceItem处于回弹状态时，释放手指将调用此函数。
+   * @docTypeFallback (bounceParams: {offset: number, type: 'start' | 'end'}) => void
    */
   onStartBounceItemBounce?: (bounceParams: onBounceParams) => void
   /**                       ·····   ··
@@ -392,6 +394,7 @@ export interface BounceConfig {
    * @iOS
    * @Harmony
    * @zh 当endBounceItem处于回弹状态时，释放手指将调用此函数。
+   * @docTypeFallback (bounceParams: {offset: number, type: 'start' | 'end'}) => void
    */
   onEndBounceItemBounce?: (bounceParams: onBounceParams) => void
   /**
@@ -423,6 +426,7 @@ export interface SwiperRef {
    * @iOS
    * @Harmony
    * @zh 滑动到指定索引的项目
+   * @docTypeFallback (index: number, options?: {animate?: boolean, onFinished?: () => void}) => void
    */
   swipeTo: (index: number, options?: SwipeToOptions) => void
   /**
