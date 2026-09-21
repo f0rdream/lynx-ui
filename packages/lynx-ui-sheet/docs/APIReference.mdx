@@ -1,7 +1,5 @@
 import { UIApiTable, ClassRenderPropTable } from "@lynx-ui/index";
 
-<!-- cspell:disable -->
-
 
 ### SheetRoot
 
@@ -500,7 +498,7 @@ The root component of the Sheet, containing all of its child components.
   },
   {
     "name": "rubberBand",
-    "type": "number | boolean | Record<string, unknown>",
+    "type": "number | boolean | {coeff?: number, max?: number}",
     "summary": [
       {
         "kind": "text",
@@ -1728,7 +1726,7 @@ The main content of the Sheet.
 <UIApiTable source={[
   {
     "name": "close",
-    "type": "(opts: Record<string, unknown>) => void",
+    "type": "(opts?: {animate?: boolean, snapAnimation?: SheetTransition}) => void",
     "summary": [],
     "summary_zh": [],
     "defaultValue": "",
@@ -1736,11 +1734,19 @@ The main content of the Sheet.
     "isSupportIOS": false,
     "isSupportAndroid": false,
     "isSupportHarmony": false,
-    "docTypeFallback": null
+    "docTypeFallback": {
+      "tag": "@docTypeFallback",
+      "content": [
+        {
+          "kind": "text",
+          "text": "(opts?: {animate?: boolean, snapAnimation?: SheetTransition}) => void"
+        }
+      ]
+    }
   },
   {
     "name": "collapse",
-    "type": "(opts: Record<string, unknown>) => void",
+    "type": "(opts?: {animate?: boolean, snapAnimation?: SheetTransition}) => void",
     "summary": [],
     "summary_zh": [],
     "defaultValue": "",
@@ -1748,11 +1754,19 @@ The main content of the Sheet.
     "isSupportIOS": false,
     "isSupportAndroid": false,
     "isSupportHarmony": false,
-    "docTypeFallback": null
+    "docTypeFallback": {
+      "tag": "@docTypeFallback",
+      "content": [
+        {
+          "kind": "text",
+          "text": "(opts?: {animate?: boolean, snapAnimation?: SheetTransition}) => void"
+        }
+      ]
+    }
   },
   {
     "name": "expand",
-    "type": "(opts: Record<string, unknown>) => void",
+    "type": "(opts?: {animate?: boolean, snapAnimation?: SheetTransition}) => void",
     "summary": [],
     "summary_zh": [],
     "defaultValue": "",
@@ -1760,11 +1774,19 @@ The main content of the Sheet.
     "isSupportIOS": false,
     "isSupportAndroid": false,
     "isSupportHarmony": false,
-    "docTypeFallback": null
+    "docTypeFallback": {
+      "tag": "@docTypeFallback",
+      "content": [
+        {
+          "kind": "text",
+          "text": "(opts?: {animate?: boolean, snapAnimation?: SheetTransition}) => void"
+        }
+      ]
+    }
   },
   {
     "name": "open",
-    "type": "(opts: Record<string, unknown>) => void",
+    "type": "(opts?: {animate?: boolean, snapAnimation?: SheetTransition}) => void",
     "summary": [],
     "summary_zh": [],
     "defaultValue": "",
@@ -1772,11 +1794,19 @@ The main content of the Sheet.
     "isSupportIOS": false,
     "isSupportAndroid": false,
     "isSupportHarmony": false,
-    "docTypeFallback": null
+    "docTypeFallback": {
+      "tag": "@docTypeFallback",
+      "content": [
+        {
+          "kind": "text",
+          "text": "(opts?: {animate?: boolean, snapAnimation?: SheetTransition}) => void"
+        }
+      ]
+    }
   },
   {
     "name": "snapTo",
-    "type": "(index: number, opts: Record<string, unknown>) => void",
+    "type": "(index: number, opts?: {animate?: boolean, snapAnimation?: SheetTransition}) => void",
     "summary": [],
     "summary_zh": [],
     "defaultValue": "",
@@ -1784,6 +1814,14 @@ The main content of the Sheet.
     "isSupportIOS": false,
     "isSupportAndroid": false,
     "isSupportHarmony": false,
-    "docTypeFallback": null
+    "docTypeFallback": {
+      "tag": "@docTypeFallback",
+      "content": [
+        {
+          "kind": "text",
+          "text": "(index: number, opts?: {animate?: boolean, snapAnimation?: SheetTransition}) => void"
+        }
+      ]
+    }
   }
 ]}/>
